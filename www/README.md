@@ -6,16 +6,16 @@ Vite · React 19 · Mantine 7 · TanStack Router (file-based routes) · TanStack
 
 ## Getting started
 
-The backend must be running (see `../backend/README.md`) with migrations and seed applied.
+The app runs with Docker from the repository root together with the API; see the [root README](../README.md):
 
 ```bash
-cd www
-cp .env.example .env
-yarn install
-yarn dev            # http://localhost:5173
+cp www/.env.example www/.env
+docker compose up --build -d   # http://localhost:5000
 ```
 
-In development, Vite forwards `/api/*` to the backend (`VITE_API_PROXY_TARGET`, `http://localhost:3000` by default), so CORS is not needed. To point a build at another URL, set `VITE_API_URL`.
+In development, Vite forwards `/api/*` to the API (`VITE_API_PROXY_TARGET`, `http://upwind-board-server:5001` inside Docker), so CORS is not needed. Running `yarn dev` on the host instead? Set `VITE_API_PROXY_TARGET=http://localhost:5001`.
+
+Production builds call the API directly at `VITE_API_URL` (read from `.env` at build time) and are served by nginx (`Dockerfile.prod`, `nginx.conf`).
 
 | Command | What it does |
 | --- | --- |

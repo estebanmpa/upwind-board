@@ -1,0 +1,78 @@
+name: upwind-board-local
+
+x-logging: &default-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+    compress: "true"
+
+services:
+  upwind-board-server:
+    container_name: upwind-board-backend-container
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # Applies pending migrations, then starts Nest in watch mode.
+    command: sh -c "yarn migration:run && yarn start:dev"
+    ports:
+      - 5001:5001
+    networks:
+      - upwind-board-private-network
+    restart: unless-stopped
+    logging: *default-logging
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      upwind-board-db:
+        condition: service_healthy
+
+  upwind-board-www:
+    container_name: upwind-board-frontend-container
+    build:
+      context: ./www
+      dockerfile: Dockerfile
+    ports:
+      - 5000:5000
+    networks:
+      - upwind-board-private-network
+    restart: unless-stopped
+    logging: *default-logging
+    env_file:
+      - ./www/.env
+    volumes:
+      - ./www:/app
+      - /app/node_modules
+    depends_on:
+      - upwind-board-server
+
+  upwind-board-db:
+    image: postgres:17-alpine
+    container_name: upwind-board-db-container
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - 5434:5432
+    networks:
+      - upwind-board-private-network
+    environment:
+      POSTGRES_USER: localuser
+      POSTGRES_PASSWORD: localpassword
+      POSTGRES_DB: upwindboarddb
+    volumes:
+      - upwind-board-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  upwind-board-db-volume:
+
+networks:
+  upwind-board-private-network:
+    driver: bridge

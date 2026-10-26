@@ -2,7 +2,7 @@
 
 API for IKO kitesurf instructors to log their lessons and track their students' progression.
 
-NestJS 12 · TypeScript (ESM) · PostgreSQL 17 + TypeORM (with migrations) · class-validator · Swagger · Vitest (e2e)
+NestJS 12 · TypeScript (ESM) · PostgreSQL 17 + TypeORM (with migrations) · class-validator · Swagger
 
 ## Requirements
 
@@ -12,23 +12,26 @@ NestJS 12 · TypeScript (ESM) · PostgreSQL 17 + TypeORM (with migrations) · cl
 
 ## Getting started
 
-```bash
-cd backend
-cp .env.example .env          # defaults match docker-compose.yml
-yarn install
-docker compose up -d --wait   # PostgreSQL on localhost:5432
-yarn migration:run            # creates the schema
-yarn seed                     # IKO skill tree + a sample instructor
-yarn start:dev                # http://localhost:3000
-```
-
-The OpenAPI docs are served at **<http://localhost:3000/docs>** (JSON at `/docs-json`).
-
-When the container is created for the first time, `docker/postgres-init` also creates the `upwind_board_test` database used by the e2e tests. If the volume already existed, create it manually:
+The whole stack (API, web app and PostgreSQL) runs with Docker from the repository root; see the [root README](../README.md):
 
 ```bash
-docker exec upwind-board-postgres createdb -U upwind upwind_board_test
+cp backend/.env.example backend/.env
+docker compose up --build -d                        # applies migrations on start
+docker compose exec upwind-board-server yarn seed   # IKO skill tree + a sample instructor
 ```
+
+The API listens on <http://localhost:5001> and the OpenAPI docs are served at **<http://localhost:5001/docs>** (JSON at `/docs-json`).
+
+Run the scripts below inside the container (`docker compose exec upwind-board-server yarn <script>`). To run them on the host instead, set `DB_HOST=localhost` and `DB_PORT=5434` in `.env`.
+
+### Environment variables
+
+| Variable | Description |
+| --- | --- |
+| `PORT` | HTTP port (5001) |
+| `CORS_ORIGINS` | Comma-separated origins allowed to call the API. Empty disables CORS (local development goes through the Vite proxy) |
+| `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` | PostgreSQL connection |
+| `DB_LOGGING` | Log SQL queries (`true`/`false`) |
 
 ## Scripts
 
@@ -36,13 +39,13 @@ docker exec upwind-board-postgres createdb -U upwind upwind_board_test
 | --- | --- |
 | `yarn start:dev` | API in watch mode |
 | `yarn build` / `yarn start:prod` | Compiles to `dist/` and runs it |
+| `yarn migration:run:prod` | Applies pending migrations from an existing build (used by the production image) |
 | `yarn migration:run` | Applies pending migrations |
 | `yarn migration:revert` | Reverts the last migration |
 | `yarn migration:show` | Lists migrations and their status |
 | `yarn migration:check` | Fails if the entities differ from the schema the migrations produce |
 | `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Name>` | Generates a new migration (after `yarn build`) |
 | `yarn seed` | Idempotent seed (safe to run as many times as needed) |
-| `yarn test:e2e` | e2e tests against `upwind_board_test` (they apply migrations and truncate the tables) |
 | `yarn lint` / `yarn format` | oxlint / prettier |
 
 The migration and seed commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
@@ -142,8 +145,6 @@ src/
     rest/          controllers, error filter and global setup (pipes, Swagger)
     modules/       Nest modules wiring ports to adapters
     seed/          JSON data and seed logic
-test/
-  e2e/             e2e tests (supertest) and helpers
 ```
 
 ## Authentication (pending)
