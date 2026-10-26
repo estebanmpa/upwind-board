@@ -1,0 +1,48 @@
+{
+  "name": "upwind-board-www",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@hookform/resolvers": "5.0.1",
+    "@mantine/core": "7.17.8",
+    "@mantine/dates": "7.17.8",
+    "@mantine/hooks": "7.17.8",
+    "@mantine/modals": "7.17.8",
+    "@mantine/notifications": "7.17.8",
+    "@tabler/icons-react": "3.31.0",
+    "@tanstack/react-query": "5.75.5",
+    "@tanstack/react-router": "1.120.2",
+    "dayjs": "1.11.13",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "react-hook-form": "7.56.2",
+    "zod": "3.24.4"
+  },
+  "devDependencies": {
+    "@tanstack/router-plugin": "1.120.2",
+    "@types/react": "19.1.3",
+    "@types/react-dom": "19.1.3",
+    "@vitejs/plugin-react": "4.4.1",
+    "postcss": "8.5.3",
+    "postcss-preset-mantine": "1.17.0",
+    "postcss-simple-vars": "7.0.1",
+    "prettier": "3.5.3",
+    "typescript": "5.8.3",
+    "vite": "6.3.5"
+  },
+  "resolutions": {
+    "@tanstack/router-generator": "1.120.2",
+    "@tanstack/router-utils": "1.115.0",
+    "@tanstack/router-core": "1.119.0",
+    "rollup": "4.40.2",
+    "vite": "6.3.5"
+  },
+  "packageManager": "yarn@1.22.22"
+}

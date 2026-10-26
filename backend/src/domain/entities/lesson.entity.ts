@@ -7,9 +7,17 @@ export class LessonSkillRecord {
   notes: string | null;
 }
 
+/** Read-only name of a related person, included for display. */
+export class PersonSummary {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
 export class LessonStudent {
   id: string;
   studentId: string;
+  student: PersonSummary;
   kiteSizeM2: number | null;
   board: string | null;
   notes: string | null;
@@ -20,6 +28,7 @@ export class LessonStudent {
 export class Lesson {
   id: string;
   instructorId: string;
+  instructor: PersonSummary;
   startsAt: Date;
   durationMinutes: number;
   spot: string;
@@ -43,9 +52,9 @@ type WithOptionalId<T> = Omit<T, 'id'> & { id?: string };
  * children with id are updated and the ones missing from the draft are removed.
  */
 export type LessonDraft = WithOptionalId<
-  Omit<Lesson, 'students' | 'createdAt' | 'updatedAt'>
+  Omit<Lesson, 'instructor' | 'students' | 'createdAt' | 'updatedAt'>
 > & {
-  students: (WithOptionalId<Omit<LessonStudent, 'skillRecords'>> & {
+  students: (WithOptionalId<Omit<LessonStudent, 'student' | 'skillRecords'>> & {
     skillRecords: WithOptionalId<LessonSkillRecord>[];
   })[];
 };

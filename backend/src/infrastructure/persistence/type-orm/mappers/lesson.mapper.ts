@@ -2,6 +2,7 @@ import {
   Lesson,
   LessonSkillRecord,
   LessonStudent,
+  PersonSummary,
 } from '../../../../domain/entities/lesson.entity.js';
 import { LessonSkillRecordOrmEntity } from '../entities/lesson-skill-record.orm-entity.js';
 import { LessonStudentOrmEntity } from '../entities/lesson-student.orm-entity.js';
@@ -12,12 +13,23 @@ const byCreation = (
   b: { createdAt: Date; id: string },
 ) => a.createdAt.getTime() - b.createdAt.getTime() || a.id.localeCompare(b.id);
 
+const toPersonSummary = (person: {
+  id: string;
+  firstName: string;
+  lastName: string;
+}): PersonSummary => ({
+  id: person.id,
+  firstName: person.firstName,
+  lastName: person.lastName,
+});
+
 export class LessonMapper {
-  /** Expects `students.skillRecords` to be loaded. */
+  /** Expects `instructor`, `students.student` and `students.skillRecords` loaded. */
   static toDomain(entity: LessonOrmEntity): Lesson {
     return new Lesson({
       id: entity.id,
       instructorId: entity.instructorId,
+      instructor: toPersonSummary(entity.instructor!),
       startsAt: entity.startsAt,
       durationMinutes: entity.durationMinutes,
       spot: entity.spot,
@@ -39,6 +51,7 @@ export class LessonMapper {
     return {
       id: entity.id,
       studentId: entity.studentId,
+      student: toPersonSummary(entity.student!),
       kiteSizeM2: entity.kiteSizeM2,
       board: entity.board,
       notes: entity.notes,

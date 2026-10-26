@@ -1,30 +1,30 @@
 # Upwind Board — Backend
 
-API para que instructores de kitesurf IKO registren sus clases y la progresión de sus alumnos.
+API for IKO kitesurf instructors to log their lessons and track their students' progression.
 
-NestJS 12 · TypeScript (ESM) · PostgreSQL 17 + TypeORM (con migraciones) · class-validator · Swagger · Vitest
+NestJS 12 · TypeScript (ESM) · PostgreSQL 17 + TypeORM (with migrations) · class-validator · Swagger · Vitest (e2e)
 
-## Requisitos
+## Requirements
 
 - Node.js 24+
 - Yarn 1.x
 - Docker + Docker Compose
 
-## Levantar el entorno
+## Getting started
 
 ```bash
 cd backend
-cp .env.example .env          # los valores por defecto coinciden con docker-compose.yml
+cp .env.example .env          # defaults match docker-compose.yml
 yarn install
-docker compose up -d --wait   # PostgreSQL en localhost:5432
-yarn migration:run            # crea el esquema
-yarn seed                     # árbol de skills IKO + un instructor de ejemplo
+docker compose up -d --wait   # PostgreSQL on localhost:5432
+yarn migration:run            # creates the schema
+yarn seed                     # IKO skill tree + a sample instructor
 yarn start:dev                # http://localhost:3000
 ```
 
-La documentación OpenAPI queda en **<http://localhost:3000/docs>** (JSON en `/docs-json`).
+The OpenAPI docs are served at **<http://localhost:3000/docs>** (JSON at `/docs-json`).
 
-Al crearse el contenedor por primera vez, `docker/postgres-init` también crea la base `upwind_board_test`, que usan los tests e2e. Si el volumen ya existía de antes, creala a mano:
+When the container is created for the first time, `docker/postgres-init` also creates the `upwind_board_test` database used by the e2e tests. If the volume already existed, create it manually:
 
 ```bash
 docker exec upwind-board-postgres createdb -U upwind upwind_board_test
@@ -32,58 +32,57 @@ docker exec upwind-board-postgres createdb -U upwind upwind_board_test
 
 ## Scripts
 
-| Comando | Qué hace |
+| Command | What it does |
 | --- | --- |
-| `yarn start:dev` | API en modo watch |
-| `yarn build` / `yarn start:prod` | Compila a `dist/` y lo ejecuta |
-| `yarn migration:run` | Aplica las migraciones pendientes |
-| `yarn migration:revert` | Revierte la última migración |
-| `yarn migration:show` | Lista las migraciones y su estado |
-| `yarn migration:check` | Falla si las entidades difieren del esquema que generan las migraciones |
-| `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Nombre>` | Genera una migración nueva (después de `yarn build`) |
-| `yarn seed` | Seed idempotente (se puede correr las veces que haga falta) |
-| `yarn test` | Tests unitarios |
-| `yarn test:e2e` | Tests e2e contra `upwind_board_test` (aplican migraciones y truncan las tablas) |
+| `yarn start:dev` | API in watch mode |
+| `yarn build` / `yarn start:prod` | Compiles to `dist/` and runs it |
+| `yarn migration:run` | Applies pending migrations |
+| `yarn migration:revert` | Reverts the last migration |
+| `yarn migration:show` | Lists migrations and their status |
+| `yarn migration:check` | Fails if the entities differ from the schema the migrations produce |
+| `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Name>` | Generates a new migration (after `yarn build`) |
+| `yarn seed` | Idempotent seed (safe to run as many times as needed) |
+| `yarn test:e2e` | e2e tests against `upwind_board_test` (they apply migrations and truncate the tables) |
 | `yarn lint` / `yarn format` | oxlint / prettier |
 
-Los comandos de migraciones y seed compilan primero y usan `dist/infrastructure/persistence/type-orm/data-source.js`, que lee el `.env`. Las migraciones nuevas se registran en `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` está siempre desactivado.
+The migration and seed commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
 
 ## Seed
 
-Los datos están separados de la lógica, en JSON fácil de editar:
+The data lives apart from the logic, in easy-to-edit JSON files:
 
-- `src/infrastructure/seed/data/iko-skills.json`: árbol IKO (L1 Discovery, L2 Intermediate, L3 Independent y sus habilidades). Cada nodo tiene `code`, `name`, `description` y `children` opcionales; `sortOrder` es opcional (por defecto, la posición ×10).
-- `src/infrastructure/seed/data/instructors.json`: instructores de ejemplo.
+- `src/infrastructure/seed/data/iko-skills.json`: the IKO tree (L1 Discovery, L2 Intermediate, L3 Independent and their skills). Each node has `code`, `name`, and optional `description` and `children`; `sortOrder` is optional (defaults to the node's position ×10).
+- `src/infrastructure/seed/data/instructors.json`: sample instructors.
 
-Reglas del seed:
+Seed rules:
 
-- Las skills se hacen upsert por `code`: nombre, descripción, padre y orden siguen al archivo; `active` solo se setea al insertar, así que una skill desactivada desde la API sigue desactivada.
-- Los instructores se insertan por email y, si ya existen, no se tocan.
-- Todo corre en una transacción. Si el archivo le agrega hijos a una skill que ya tiene registros en clases, el seed falla (una skill evaluada tiene que seguir siendo hoja).
+- Skills are upserted by `code`: name, description, parent and order follow the file. `active` is only set on insert, so a skill deactivated through the API stays deactivated.
+- Instructors are inserted by email and left untouched if they already exist.
+- Everything runs in one transaction. If the file adds children to a skill that already has lesson records, the seed fails (an evaluated skill must remain a leaf).
 
-## Modelo
+## Data model
 
-`instructors`, `students`, `skills` (árbol autorreferencial por `parent_id`), `lessons`, `lesson_students` y `lesson_skill_records`. Todas las tablas usan ids uuid (`gen_random_uuid()`), `created_at`/`updated_at` y nombres en snake_case.
+`instructors`, `students`, `skills` (self-referencing tree through `parent_id`), `lessons`, `lesson_students` and `lesson_skill_records`. Every table uses uuid ids (`gen_random_uuid()`), `created_at`/`updated_at` and snake_case names.
 
-- **Árbol de skills**: lista de adyacencia que se resuelve con `WITH RECURSIVE`. Al mover una skill se verifica que el nuevo padre no sea ella misma ni un descendiente suyo (además hay un `CHECK` contra `parent_id = id`).
-- **Solo las hojas se evalúan**: un registro de una clase solo puede apuntar a una skill sin hijos. Por eso tampoco se le pueden agregar hijos a una skill que ya tiene registros.
-- **La progresión no se guarda**: el status actual de cada hoja es el último registrado para ese alumno, ordenando por `lessons.starts_at`. Si dos clases empiezan a la misma hora, gana el registro modificado más recientemente.
+- **Skill tree**: an adjacency list resolved with `WITH RECURSIVE`. When a skill is moved, the service checks that the new parent is neither the skill itself nor one of its descendants (there is also a `CHECK` against `parent_id = id`).
+- **Only leaves are evaluated**: a lesson record can only point to a skill without children. For the same reason, a skill that already has records cannot get children.
+- **Progression is not stored**: each leaf's current status is the latest one recorded for that student, ordered by `lessons.starts_at`. If two lessons start at the same time, the most recently modified record wins.
 
 ## Endpoints
 
-| Recurso | Endpoints |
+| Resource | Endpoints |
 | --- | --- |
 | Instructors | `GET/POST /instructors`, `GET/PATCH/DELETE /instructors/:id` (`?search=&active=&page=&limit=`) |
-| Students | `GET/POST /students`, `GET/PATCH/DELETE /students/:id` (`?search=` por nombre, apellido o nombre completo) |
+| Students | `GET/POST /students`, `GET/PATCH/DELETE /students/:id` (`?search=` by first, last or full name) |
 | Skills | `GET /skills/tree` (`?includeInactive=true`), `GET/POST /skills`, `GET/PATCH/DELETE /skills/:id` |
 | Lessons | `GET /lessons` (`?instructorId=&studentId=&from=&to=`), `POST /lessons`, `GET/PATCH/DELETE /lessons/:id` |
 | Progress | `GET /students/:id/progress`, `GET /students/:id/lessons` |
 
-Los listados están paginados (`page` arranca en 1, `limit` por defecto 20 y máximo 100) y devuelven `{ items, total, page, limit }`.
+Lists are paginated (`page` starts at 1, `limit` defaults to 20 with a maximum of 100) and return `{ items, total, page, limit }`.
 
-### Lecciones
+### Lessons
 
-`POST /lessons` crea la clase, sus alumnos y los registros de skills en una sola transacción:
+`POST /lessons` creates the lesson, its students and their skill records in a single transaction:
 
 ```json
 {
@@ -100,50 +99,53 @@ Los listados están paginados (`page` arranca en 1, `limit` por defecto 20 y má
       "kiteSizeM2": 9,
       "board": "Twin tip 138",
       "skillRecords": [
-        { "skillId": "…", "status": "practiced", "notes": "Le cuesta la zona de potencia" }
+        { "skillId": "…", "status": "practiced", "notes": "Struggles with the power zone" }
       ]
     }
   ]
 }
 ```
 
-En `PATCH /lessons/:id` todos los campos son opcionales. Si se envía `students`, es la lista completa de participantes:
+`startsAt` must include a timezone offset, and `windDirection` uses the 16-point compass with Spanish initials (`N`, `NNE` … `O` for west … `NO`, `NNO`).
 
-- Los alumnos que no aparecen se quitan de la clase, junto con sus registros.
-- Los que ya estaban se identifican por `studentId` y conservan su id. Los campos que no se envían mantienen su valor y `null` los borra.
-- Si se omite `skillRecords`, se mantienen los registros actuales. Si se envía, reemplaza la lista (los registros de una misma skill conservan su id).
+In `PATCH /lessons/:id` every field is optional. When `students` is sent, it is the full list of participants:
 
-### Progreso
+- Students missing from it are removed from the lesson, together with their records.
+- Students already in the lesson are matched by `studentId` and keep their id. Fields that are not sent keep their value; `null` clears them.
+- Omitting `skillRecords` keeps the current records. Sending it replaces the list (records for the same skill keep their id).
 
-`GET /students/:id/progress` devuelve el árbol de skills; cada hoja trae su `status` actual (`null` si nunca se trabajó), `lastLessonId` y `lastWorkedAt`. Cada nodo trae además un `summary` con los conteos de hojas por estado. También incluye `totalLessons`, `totalMinutes` y `totalHours`. Las skills inactivas solo aparecen si el alumno las trabajó.
+Responses from `/lessons` also include, for display only, the instructor's name (`instructor: { id, firstName, lastName }`) and each student's name (`students[].student`). They are ignored in `POST`/`PATCH` bodies.
 
-### Errores
+### Progress
 
-Todos los errores tienen la misma forma: `{ statusCode, error, message, path, timestamp }`.
+`GET /students/:id/progress` returns the skill tree. Each leaf carries its current `status` (`null` if never worked on), `lastLessonId` and `lastWorkedAt`, and every node has a `summary` with leaf counts per status. The response also includes `totalLessons`, `totalMinutes` and `totalHours`. Inactive skills only appear if the student worked on them.
 
-- **400**: validación del payload, id mal formado o regla de negocio violada (skill no hoja, ciclo en el árbol, viento mínimo mayor que el máximo, alumno o skill repetidos, instructor inactivo, skill inactiva).
-- **404**: el recurso no existe, ya sea en la URL o referenciado en el body.
-- **409**: duplicados (email de instructor, código de skill) o borrado de algo que está en uso (instructor o alumno con clases, skill con hijos o con registros).
+### Errors
 
-## Estructura
+Every error has the same shape: `{ statusCode, error, message, path, timestamp }`.
 
-Arquitectura hexagonal, como define `AGENTS.md`:
+- **400**: payload validation, malformed id, or a broken business rule (non-leaf skill, cycle in the tree, minimum wind above maximum, repeated student or skill, inactive instructor, inactive skill).
+- **404**: the resource does not exist, whether it comes from the URL or is referenced in the body.
+- **409**: duplicates (instructor email, skill code) or deleting something in use (instructor or student with lessons, skill with children or records).
+
+## Project structure
+
+Hexagonal architecture, as defined in `AGENTS.md`:
 
 ```text
 src/
-  domain/          entidades, enums, errores y puertos de repositorio (clases abstractas)
-  application/     casos de uso, DTOs validados y servicios puros (árbol, progresión, merge de lecciones)
+  domain/          entities, enums, errors and repository ports (abstract classes)
+  application/     use cases, validated DTOs and pure services (tree, progression, lesson merge)
   infrastructure/
-    config/        validación del .env y opciones de TypeORM
-    persistence/type-orm/  entidades ORM, mappers, repositorios, migraciones, data-source del CLI
-    rest/          controllers, filtro de errores y setup global (pipes, Swagger)
-    modules/       módulos Nest que conectan puertos con adaptadores
-    seed/          datos JSON y lógica del seed
+    config/        .env validation and TypeORM options
+    persistence/type-orm/  ORM entities, mappers, repositories, migrations, CLI data source
+    rest/          controllers, error filter and global setup (pipes, Swagger)
+    modules/       Nest modules wiring ports to adapters
+    seed/          JSON data and seed logic
 test/
-  e2e/             tests e2e (supertest) y helpers
-  fakes/           repositorio en memoria y fixtures para tests unitarios
+  e2e/             e2e tests (supertest) and helpers
 ```
 
-## Autenticación (pendiente)
+## Authentication (pending)
 
-Todavía no hay auth. `lessons.instructor_id` ya existe, así que más adelante el instructor autenticado podría salir del token en lugar del body, y se podría filtrar por instructor desde los casos de uso.
+There is no auth yet. `lessons.instructor_id` already exists, so later the authenticated instructor could come from the token instead of the body, and the use cases could filter by instructor.

@@ -20,7 +20,10 @@ import { LessonStudentOrmEntity } from '../entities/lesson-student.orm-entity.js
 import { LessonOrmEntity } from '../entities/lesson.orm-entity.js';
 import { LessonMapper } from '../mappers/lesson.mapper.js';
 
-const AGGREGATE_RELATIONS = { students: { skillRecords: true } } as const;
+const AGGREGATE_RELATIONS = {
+  instructor: true,
+  students: { student: true, skillRecords: true },
+} as const;
 
 @Injectable()
 export class TypeOrmLessonRepository extends LessonRepository {

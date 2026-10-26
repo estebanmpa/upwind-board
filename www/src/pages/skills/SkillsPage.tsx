@@ -1,0 +1,244 @@
+import { useState } from 'react';
+import {
+  ActionIcon,
+  Badge,
+  Box,
+  Button,
+  Card,
+  Group,
+  Stack,
+  Switch,
+  Text,
+  Title,
+  Tooltip,
+} from '@mantine/core';
+import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
+import { EmptyState } from '@/components/common/EmptyState';
+import { PageHeader } from '@/components/common/PageHeader';
+import { SkillFormModal, type SkillModalState } from '@/components/skills/SkillFormModal';
+import { useConfirmDelete } from '@/hooks/useConfirmDelete';
+import { useCreateSkill, useDeleteSkill, useUpdateSkill } from '@/mutations/skills';
+import { skillTreeQuery } from '@/queries/skills';
+import type { SkillInput, SkillTreeNode } from '@/types/skill';
+import { collectLeaves } from '@/utils/skill-tree';
+import { notifyError, notifySuccess } from '@/utils/notifications';
+
+interface SkillActions {
+  onAddChild: (skill: SkillTreeNode) => void;
+  onEdit: (skill: SkillTreeNode) => void;
+  onDelete: (skill: SkillTreeNode) => void;
+}
+
+function SkillActionButtons({
+  skill,
+  actions,
+}: {
+  skill: SkillTreeNode;
+  actions: SkillActions;
+}) {
+  return (
+    <Group gap={2} wrap="nowrap">
+      <Tooltip label="Agregar sub-habilidad">
+        <ActionIcon
+          variant="subtle"
+          onClick={() => actions.onAddChild(skill)}
+          aria-label="Agregar sub-habilidad"
+        >
+          <IconPlus size={18} />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip label="Editar">
+        <ActionIcon
+          variant="subtle"
+          onClick={() => actions.onEdit(skill)}
+          aria-label="Editar"
+        >
+          <IconEdit size={18} />
+        </ActionIcon>
+      </Tooltip>
+      <Tooltip label="Eliminar">
+        <ActionIcon
+          variant="subtle"
+          color="red"
+          onClick={() => actions.onDelete(skill)}
+          aria-label="Eliminar"
+        >
+          <IconTrash size={18} />
+        </ActionIcon>
+      </Tooltip>
+    </Group>
+  );
+}
+
+function SkillRow({ skill, actions }: { skill: SkillTreeNode; actions: SkillActions }) {
+  return (
+    <Group justify="space-between" wrap="nowrap" py={6}>
+      <Group gap="xs" wrap="nowrap">
+        <Badge variant="light" color={skill.isLeaf ? 'teal' : 'brand'} radius="sm">
+          {skill.code}
+        </Badge>
+        <div>
+          <Text
+            fz="sm"
+            fw={skill.isLeaf ? 500 : 700}
+            c={skill.active ? undefined : 'dimmed'}
+          >
+            {skill.name}
+          </Text>
+          {skill.description && (
+            <Text fz="xs" c="dimmed" lineClamp={1}>
+              {skill.description}
+            </Text>
+          )}
+        </div>
+        {!skill.active && (
+          <Badge color="gray" variant="outline" size="xs">
+            Inactiva
+          </Badge>
+        )}
+      </Group>
+      <SkillActionButtons skill={skill} actions={actions} />
+    </Group>
+  );
+}
+
+function SkillBranch({
+  skill,
+  actions,
+}: {
+  skill: SkillTreeNode;
+  actions: SkillActions;
+}) {
+  return (
+    <Box>
+      <SkillRow skill={skill} actions={actions} />
+      {skill.children.length > 0 && (
+        <Box
+          pl="lg"
+          style={{ borderLeft: '2px solid var(--mantine-color-default-border)' }}
+        >
+          {skill.children.map((child) => (
+            <SkillBranch key={child.id} skill={child} actions={actions} />
+          ))}
+        </Box>
+      )}
+    </Box>
+  );
+}
+
+function LevelCard({ level, actions }: { level: SkillTreeNode; actions: SkillActions }) {
+  const leaves = level.isLeaf ? 0 : collectLeaves(level).length;
+  return (
+    <Card withBorder padding="lg" className="hover-lift fade-in-up">
+      <Group justify="space-between" wrap="nowrap" mb="sm">
+        <div>
+          <Group gap="xs">
+            <Title order={4} className="gradient-text">
+              {level.code}
+            </Title>
+            <Title order={4} c={level.active ? undefined : 'dimmed'}>
+              {level.name}
+            </Title>
+            {!level.active && <Badge color="gray">Inactivo</Badge>}
+          </Group>
+          <Text fz="sm" c="dimmed">
+            {level.description ?? `${leaves} habilidades evaluables`}
+          </Text>
+        </div>
+        <Group gap="sm" wrap="nowrap">
+          <Text fz="sm" c="dimmed" visibleFrom="sm">
+            {leaves} evaluables
+          </Text>
+          <SkillActionButtons skill={level} actions={actions} />
+        </Group>
+      </Group>
+      <Box
+        pl="lg"
+        style={{ borderLeft: '2px solid var(--mantine-color-default-border)' }}
+      >
+        {level.children.map((child) => (
+          <SkillBranch key={child.id} skill={child} actions={actions} />
+        ))}
+      </Box>
+    </Card>
+  );
+}
+
+export function SkillsPage() {
+  const [includeInactive, setIncludeInactive] = useState(true);
+  const [modal, setModal] = useState<SkillModalState | null>(null);
+  const { data: tree = [], isPending } = useQuery(skillTreeQuery(includeInactive));
+  const createSkill = useCreateSkill();
+  const updateSkill = useUpdateSkill();
+  const confirmDelete = useConfirmDelete(useDeleteSkill());
+
+  const actions: SkillActions = {
+    onAddChild: (parent) => setModal({ mode: 'create', parent }),
+    onEdit: (skill) => setModal({ mode: 'edit', skill }),
+    onDelete: (skill) =>
+      confirmDelete(skill.id, {
+        title: 'Eliminar habilidad',
+        message: `¿Eliminar “${skill.name}”? Solo es posible si no tiene sub-habilidades ni registros en clases; si no, desactivala.`,
+        successMessage: 'Habilidad eliminada',
+      }),
+  };
+
+  function save(input: SkillInput) {
+    const callbacks = {
+      onSuccess: () => {
+        notifySuccess('Habilidad guardada');
+        setModal(null);
+      },
+      onError: notifyError,
+    };
+    if (modal?.mode === 'edit') {
+      updateSkill.mutate({ id: modal.skill.id, input }, callbacks);
+    } else {
+      createSkill.mutate(input, callbacks);
+    }
+  }
+
+  return (
+    <>
+      <PageHeader
+        title="Progresión IKO"
+        description="Niveles, habilidades y sub-habilidades. Solo las hojas se evalúan en las clases."
+        actions={
+          <>
+            <Switch
+              label="Mostrar inactivas"
+              checked={includeInactive}
+              onChange={(event) => setIncludeInactive(event.currentTarget.checked)}
+            />
+            <Button
+              leftSection={<IconPlus size={18} />}
+              onClick={() => setModal({ mode: 'create', parent: null })}
+            >
+              Nuevo nivel
+            </Button>
+          </>
+        }
+      />
+      {!isPending && tree.length === 0 ? (
+        <EmptyState
+          title="El árbol está vacío"
+          description="Corré el seed del backend o creá el primer nivel."
+        />
+      ) : (
+        <Stack>
+          {tree.map((level) => (
+            <LevelCard key={level.id} level={level} actions={actions} />
+          ))}
+        </Stack>
+      )}
+      <SkillFormModal
+        state={modal}
+        tree={tree}
+        isSubmitting={createSkill.isPending || updateSkill.isPending}
+        onClose={() => setModal(null)}
+        onSubmit={save}
+      />
+    </>
+  );
+}
