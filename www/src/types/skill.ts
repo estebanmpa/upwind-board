@@ -3,9 +3,9 @@ export const SKILL_STATUSES = ['introduced', 'practiced', 'mastered'] as const;
 export type SkillStatus = (typeof SKILL_STATUSES)[number];
 
 export const SKILL_STATUS_LABELS: Record<SkillStatus, string> = {
-  introduced: 'Introducido',
-  practiced: 'Practicado',
-  mastered: 'Dominado',
+  introduced: 'Introduced',
+  practiced: 'Practiced',
+  mastered: 'Mastered',
 };
 
 export const SKILL_STATUS_COLORS: Record<SkillStatus, string> = {
@@ -14,7 +14,7 @@ export const SKILL_STATUS_COLORS: Record<SkillStatus, string> = {
   mastered: 'teal',
 };
 
-export const NOT_STARTED_LABEL = 'Sin trabajar';
+export const NOT_STARTED_LABEL = 'Not started';
 
 export interface Skill {
   id: string;

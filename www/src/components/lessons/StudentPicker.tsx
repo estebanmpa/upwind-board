@@ -37,7 +37,7 @@ export function StudentPicker({ excludedIds, onPick }: StudentPickerProps) {
 
   return (
     <Select
-      placeholder="Buscar alumno por nombre para agregarlo"
+      placeholder="Search a student by name to add them"
       leftSection={<IconUserPlus size={18} />}
       data={options}
       value={null}
@@ -46,8 +46,8 @@ export function StudentPicker({ excludedIds, onPick }: StudentPickerProps) {
       searchValue={search}
       onSearchChange={setSearch}
       filter={({ options: all }) => all}
-      nothingFoundMessage={isFetching ? 'Buscando…' : 'No hay alumnos con ese nombre'}
-      aria-label="Agregar alumno"
+      nothingFoundMessage={isFetching ? 'Searching…' : 'No students with that name'}
+      aria-label="Add student"
     />
   );
 }

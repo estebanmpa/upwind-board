@@ -40,12 +40,12 @@ export function LessonsTable({ lessons }: { lessons: Lesson[] }) {
       <Table highlightOnHover verticalSpacing="sm">
         <Table.Thead>
           <Table.Tr>
-            <Table.Th>Fecha</Table.Th>
+            <Table.Th>Date</Table.Th>
             <Table.Th>Spot</Table.Th>
             <Table.Th>Instructor</Table.Th>
-            <Table.Th>Alumnos</Table.Th>
-            <Table.Th>Viento</Table.Th>
-            <Table.Th ta="right">Duración</Table.Th>
+            <Table.Th>Students</Table.Th>
+            <Table.Th>Wind</Table.Th>
+            <Table.Th ta="right">Duration</Table.Th>
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
@@ -54,7 +54,7 @@ export function LessonsTable({ lessons }: { lessons: Lesson[] }) {
               key={lesson.id}
               className="clickable-row"
               onClick={() =>
-                navigate({ to: '/clases/$lessonId', params: { lessonId: lesson.id } })
+                navigate({ to: '/lessons/$lessonId', params: { lessonId: lesson.id } })
               }
             >
               <Table.Td>

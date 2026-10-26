@@ -15,7 +15,7 @@ function LeafRow({ node }: { node: SkillProgressNode }) {
           </Text>
           <Text fz="xs" c="dimmed">
             {node.lastWorkedAt
-              ? `Última vez: ${formatDate(node.lastWorkedAt)}`
+              ? `Last worked on: ${formatDate(node.lastWorkedAt)}`
               : node.code}
           </Text>
         </div>
@@ -69,18 +69,18 @@ export function StudentProgressTree({ tree }: { tree: SkillProgressNode[] }) {
                   </Text>
                   {level.id === current?.id && (
                     <Badge variant="gradient" size="sm">
-                      Nivel actual
+                      Current level
                     </Badge>
                   )}
                   {level.summary.totalSkills > 0 &&
                     level.summary.mastered === level.summary.totalSkills && (
                       <Badge color="teal" size="sm">
-                        Completo
+                        Complete
                       </Badge>
                     )}
                 </Group>
                 <Text fz="sm" c="dimmed">
-                  {level.summary.mastered}/{level.summary.totalSkills} dominadas
+                  {level.summary.mastered}/{level.summary.totalSkills} mastered
                 </Text>
               </Group>
               <ProgressBar summary={level.summary} size="md" />

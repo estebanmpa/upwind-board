@@ -2,16 +2,16 @@ import { notifications } from '@mantine/notifications';
 import { ApiError } from '@/api/http';
 
 const STATUS_TITLES: Record<number, string> = {
-  0: 'Sin conexión',
-  400: 'Datos inválidos',
-  404: 'No encontrado',
-  409: 'No se puede completar la operación',
+  0: 'No connection',
+  400: 'Invalid data',
+  404: 'Not found',
+  409: 'The operation cannot be completed',
 };
 
 function errorTitle(error: unknown): string {
   return error instanceof ApiError
-    ? (STATUS_TITLES[error.status] ?? 'Error del servidor')
-    : 'Algo salió mal';
+    ? (STATUS_TITLES[error.status] ?? 'Server error')
+    : 'Something went wrong';
 }
 
 export function notifyError(error: unknown): void {

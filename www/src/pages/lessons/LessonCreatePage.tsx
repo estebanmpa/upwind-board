@@ -21,11 +21,11 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
   function save(payload: LessonPayload) {
     createLesson.mutate(payload, {
       onSuccess: () => {
-        notifySuccess('Clase registrada');
+        notifySuccess('Lesson logged');
         navigate(
           studentId
-            ? { to: '/alumnos/$studentId', params: { studentId } }
-            : { to: '/clases' },
+            ? { to: '/students/$studentId', params: { studentId } }
+            : { to: '/lessons' },
         );
       },
       onError: notifyError,
@@ -35,8 +35,8 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
   return (
     <>
       <PageHeader
-        title="Registrar clase"
-        description="Datos de la clase y lo que trabajó cada alumno"
+        title="Log lesson"
+        description="Lesson details and what each student worked on"
       />
       {studentId && isPending ? (
         <Center py="xl">
@@ -45,7 +45,7 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
       ) : (
         <LessonForm
           initialValues={emptyLessonForm(student ? [student] : [])}
-          submitLabel="Guardar clase"
+          submitLabel="Save lesson"
           isSubmitting={createLesson.isPending}
           onSubmit={save}
         />

@@ -3,7 +3,7 @@ import { LessonEditPage } from '@/pages/lessons/LessonEditPage';
 import { lessonQuery } from '@/queries/lessons';
 import { ensureOrNotFound } from '@/utils/router';
 
-export const Route = createFileRoute('/_authenticated/clases/$lessonId')({
+export const Route = createFileRoute('/_authenticated/lessons/$lessonId')({
   loader: ({ context: { queryClient }, params: { lessonId } }) =>
     ensureOrNotFound(queryClient.ensureQueryData(lessonQuery(lessonId))),
   component: LessonEditRoute,

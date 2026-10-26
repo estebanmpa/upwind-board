@@ -16,7 +16,7 @@ export function useConfirmDelete(mutation: UseMutationResult<void, Error, string
     modals.openConfirmModal({
       title: options.title,
       children: <Text fz="sm">{options.message}</Text>,
-      labels: { confirm: 'Eliminar', cancel: 'Cancelar' },
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
       onConfirm: () =>
         mutation.mutate(id, {

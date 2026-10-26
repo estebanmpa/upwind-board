@@ -50,14 +50,14 @@ export function InstructorForm({
           <Grid>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Nombre"
+                label="First name"
                 {...register('firstName')}
                 error={errors.firstName?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Apellido"
+                label="Last name"
                 {...register('lastName')}
                 error={errors.lastName?.message}
               />
@@ -72,15 +72,15 @@ export function InstructorForm({
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Teléfono"
+                label="Phone"
                 {...register('phone')}
                 error={errors.phone?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="N° de instructor IKO"
-                description="Opcional"
+                label="IKO instructor ID"
+                description="Optional"
                 {...register('ikoInstructorId')}
                 error={errors.ikoInstructorId?.message}
               />
@@ -91,8 +91,8 @@ export function InstructorForm({
             name="active"
             render={({ field: { value, ...field } }) => (
               <Switch
-                label="Activo"
-                description="Solo los instructores activos pueden asignarse a clases nuevas"
+                label="Active"
+                description="Only active instructors can be assigned to new lessons"
                 checked={value}
                 {...field}
               />

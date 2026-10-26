@@ -12,13 +12,13 @@ export function ColorSchemeToggle() {
   const isDark = computedScheme === 'dark';
 
   return (
-    <Tooltip label={isDark ? 'Modo claro' : 'Modo oscuro'}>
+    <Tooltip label={isDark ? 'Light mode' : 'Dark mode'}>
       <ActionIcon
         variant="subtle"
         size="lg"
         radius="xl"
         onClick={() => setColorScheme(isDark ? 'light' : 'dark')}
-        aria-label="Cambiar tema"
+        aria-label="Toggle color scheme"
       >
         {isDark ? <IconSun size={20} /> : <IconMoon size={20} />}
       </ActionIcon>

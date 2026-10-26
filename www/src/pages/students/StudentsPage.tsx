@@ -27,7 +27,7 @@ const PAGE_SIZE = 15;
 function StudentRow({ student, onDelete }: { student: Student; onDelete: () => void }) {
   const navigate = useNavigate();
   const goToProfile = () =>
-    navigate({ to: '/alumnos/$studentId', params: { studentId: student.id } });
+    navigate({ to: '/students/$studentId', params: { studentId: student.id } });
   return (
     <Table.Tr className="clickable-row" onClick={goToProfile}>
       <Table.Td>
@@ -38,39 +38,39 @@ function StudentRow({ student, onDelete }: { student: Student; onDelete: () => v
               {fullName(student)}
             </Text>
             <Text fz="xs" c="dimmed">
-              {student.email ?? 'Sin email'}
+              {student.email ?? 'No email'}
             </Text>
           </div>
         </Group>
       </Table.Td>
       <Table.Td>{student.phone}</Table.Td>
       <Table.Td>
-        {student.birthDate ? `${calculateAge(student.birthDate)} años` : '—'}
+        {student.birthDate ? `${calculateAge(student.birthDate)} years` : '—'}
       </Table.Td>
       <Table.Td>{student.weightKg ? `${student.weightKg} kg` : '—'}</Table.Td>
       <Table.Td onClick={(event) => event.stopPropagation()}>
         <Group gap={4} justify="end" wrap="nowrap">
-          <Tooltip label="Editar">
+          <Tooltip label="Edit">
             <ActionIcon
               variant="subtle"
               renderRoot={(props) => (
                 <Link
                   {...props}
-                  to="/alumnos/$studentId/editar"
+                  to="/students/$studentId/edit"
                   params={{ studentId: student.id }}
                 />
               )}
-              aria-label="Editar"
+              aria-label="Edit"
             >
               <IconEdit size={18} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Eliminar">
+          <Tooltip label="Delete">
             <ActionIcon
               variant="subtle"
               color="red"
               onClick={onDelete}
-              aria-label="Eliminar"
+              aria-label="Delete"
             >
               <IconTrash size={18} />
             </ActionIcon>
@@ -91,21 +91,21 @@ export function StudentsPage() {
   return (
     <>
       <PageHeader
-        title="Alumnos"
-        description="Fichas y progresión de cada alumno"
+        title="Students"
+        description="Details and progression of every student"
         actions={
           <Button
             component={Link}
-            to="/alumnos/nuevo"
+            to="/students/new"
             leftSection={<IconPlus size={18} />}
           >
-            Nuevo alumno
+            New student
           </Button>
         }
       />
       <Card withBorder padding="lg" className="fade-in-up">
         <TextInput
-          placeholder="Buscar por nombre o apellido"
+          placeholder="Search by first or last name"
           leftSection={<IconSearch size={16} />}
           value={search}
           onChange={(event) => setSearch(event.currentTarget.value)}
@@ -113,11 +113,11 @@ export function StudentsPage() {
         />
         {!isPending && data?.items.length === 0 ? (
           <EmptyState
-            title={debouncedSearch ? 'Sin resultados' : 'Todavía no hay alumnos'}
+            title={debouncedSearch ? 'No results' : 'No students yet'}
             description={
               debouncedSearch
-                ? 'No hay alumnos con ese nombre.'
-                : 'Creá el primero para empezar.'
+                ? 'No students with that name.'
+                : 'Create the first one to get started.'
             }
           />
         ) : (
@@ -126,10 +126,10 @@ export function StudentsPage() {
               <Table verticalSpacing="sm" highlightOnHover>
                 <Table.Thead>
                   <Table.Tr>
-                    <Table.Th>Alumno</Table.Th>
-                    <Table.Th>Teléfono</Table.Th>
-                    <Table.Th>Edad</Table.Th>
-                    <Table.Th>Peso</Table.Th>
+                    <Table.Th>Student</Table.Th>
+                    <Table.Th>Phone</Table.Th>
+                    <Table.Th>Age</Table.Th>
+                    <Table.Th>Weight</Table.Th>
                     <Table.Th />
                   </Table.Tr>
                 </Table.Thead>
@@ -140,9 +140,9 @@ export function StudentsPage() {
                       student={student}
                       onDelete={() =>
                         confirmDelete(student.id, {
-                          title: 'Eliminar alumno',
-                          message: `¿Seguro que querés eliminar a ${fullName(student)}? Solo es posible si no tiene clases.`,
-                          successMessage: 'Alumno eliminado',
+                          title: 'Delete student',
+                          message: `Are you sure you want to delete ${fullName(student)}? Only possible if they have no lessons.`,
+                          successMessage: 'Student deleted',
                         })
                       }
                     />

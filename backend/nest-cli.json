@@ -12,12 +12,6 @@
           "classValidatorShim": true
         }
       }
-    ],
-    "assets": [
-      {
-        "include": "infrastructure/seed/data/*.json",
-        "watchAssets": true
-      }
     ]
   }
 }

@@ -17,8 +17,7 @@ Requirements: Docker + Docker Compose.
 ```bash
 cp backend/.env.example backend/.env
 cp www/.env.example www/.env
-docker compose up --build -d
-docker compose exec upwind-board-server yarn seed   # IKO skill tree + a sample instructor
+docker compose up --build -d   # migrations create the schema + IKO skill tree + a sample instructor
 ```
 
 | Service | Container | URL |

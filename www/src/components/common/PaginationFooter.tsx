@@ -19,7 +19,7 @@ export function PaginationFooter({
   return (
     <Group justify="space-between" mt="md">
       <Text fz="sm" c="dimmed">
-        {first}–{last} de {total}
+        {first}–{last} of {total}
       </Text>
       {pages > 1 && <Pagination value={page} total={pages} onChange={onChange} />}
     </Group>
