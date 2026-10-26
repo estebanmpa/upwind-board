@@ -12,10 +12,13 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      // The API has no CORS yet: the dev server forwards /api/* to it.
+      port: 5000,
+      // Reachable from outside the container when started with docker compose.
+      host: true,
+      // Same-origin calls in development: the dev server forwards /api/* to the API.
       proxy: {
         '/api': {
-          target: env.VITE_API_PROXY_TARGET ?? 'http://localhost:3000',
+          target: env.VITE_API_PROXY_TARGET ?? 'http://localhost:5001',
           rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },

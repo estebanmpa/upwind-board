@@ -1,6 +1,7 @@
 import type { ApiErrorBody } from '@/types/api';
 
-const API_URL = import.meta.env.VITE_API_URL ?? '/api';
+// An empty VITE_API_URL (the .env default) also means "use the dev proxy".
+const API_URL = import.meta.env.VITE_API_URL || '/api';
 
 type QueryValue = string | number | boolean | undefined | null;
 

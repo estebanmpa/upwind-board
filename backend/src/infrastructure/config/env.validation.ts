@@ -33,10 +33,22 @@ export class EnvironmentVariables {
   @IsString()
   DB_NAME: string;
 
+  /** Comma-separated origins allowed to call the API; empty disables CORS. */
+  @IsOptional()
+  @IsString()
+  CORS_ORIGINS: string = '';
+
   @IsOptional()
   @Transform(({ obj }) => [true, 'true'].includes(obj.DB_LOGGING))
   @IsBoolean()
   DB_LOGGING: boolean = false;
+}
+
+export function parseCorsOrigins(value: string): string[] {
+  return value
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
 }
 
 export function validateEnv(
