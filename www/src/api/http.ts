@@ -57,7 +57,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
   } catch {
-    throw new ApiError(0, 'No se pudo conectar con el servidor');
+    throw new ApiError(0, 'Could not connect to the server');
   }
 
   if (!response.ok) throw await toApiError(response);

@@ -23,18 +23,18 @@ import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle';
 import { Logo } from '@/components/common/Logo';
 
 interface NavItem {
-  to: '/' | '/alumnos' | '/clases' | '/instructores' | '/habilidades';
+  to: '/' | '/students' | '/lessons' | '/instructors' | '/skills';
   label: string;
   icon: Icon;
   exact?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: '/', label: 'Resumen', icon: IconLayoutDashboard, exact: true },
-  { to: '/clases', label: 'Clases', icon: IconCalendarEvent },
-  { to: '/alumnos', label: 'Alumnos', icon: IconUsers },
-  { to: '/instructores', label: 'Instructores', icon: IconSchool },
-  { to: '/habilidades', label: 'Progresión IKO', icon: IconListTree },
+  { to: '/', label: 'Dashboard', icon: IconLayoutDashboard, exact: true },
+  { to: '/lessons', label: 'Lessons', icon: IconCalendarEvent },
+  { to: '/students', label: 'Students', icon: IconUsers },
+  { to: '/instructors', label: 'Instructors', icon: IconSchool },
+  { to: '/skills', label: 'IKO progression', icon: IconListTree },
 ];
 
 function isActive(pathname: string, item: NavItem): boolean {
@@ -60,13 +60,13 @@ export function AppLayout({ children }: { children: ReactNode }) {
           <Group gap="xs">
             <Button
               component={Link}
-              to="/clases/nueva"
+              to="/lessons/new"
               variant="gradient"
               size="xs"
               leftSection={<IconPlus size={16} />}
               visibleFrom="xs"
             >
-              Registrar clase
+              Log lesson
             </Button>
             <ColorSchemeToggle />
           </Group>
@@ -91,7 +91,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </AppShell.Section>
         <AppShell.Section>
           <Text fz="xs" c="dimmed" px="sm">
-            Acceso sin autenticación (temporal)
+            Unauthenticated access (temporary)
           </Text>
         </AppShell.Section>
       </AppShell.Navbar>

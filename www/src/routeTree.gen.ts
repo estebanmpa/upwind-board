@@ -13,17 +13,17 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedHabilidadesImport } from './routes/_authenticated/habilidades'
-import { Route as AuthenticatedInstructoresIndexImport } from './routes/_authenticated/instructores/index'
-import { Route as AuthenticatedClasesIndexImport } from './routes/_authenticated/clases/index'
-import { Route as AuthenticatedAlumnosIndexImport } from './routes/_authenticated/alumnos/index'
-import { Route as AuthenticatedInstructoresNuevoImport } from './routes/_authenticated/instructores/nuevo'
-import { Route as AuthenticatedInstructoresInstructorIdImport } from './routes/_authenticated/instructores/$instructorId'
-import { Route as AuthenticatedClasesNuevaImport } from './routes/_authenticated/clases/nueva'
-import { Route as AuthenticatedClasesLessonIdImport } from './routes/_authenticated/clases/$lessonId'
-import { Route as AuthenticatedAlumnosNuevoImport } from './routes/_authenticated/alumnos/nuevo'
-import { Route as AuthenticatedAlumnosStudentIdIndexImport } from './routes/_authenticated/alumnos/$studentId/index'
-import { Route as AuthenticatedAlumnosStudentIdEditarImport } from './routes/_authenticated/alumnos/$studentId/editar'
+import { Route as AuthenticatedSkillsImport } from './routes/_authenticated/skills'
+import { Route as AuthenticatedStudentsIndexImport } from './routes/_authenticated/students/index'
+import { Route as AuthenticatedLessonsIndexImport } from './routes/_authenticated/lessons/index'
+import { Route as AuthenticatedInstructorsIndexImport } from './routes/_authenticated/instructors/index'
+import { Route as AuthenticatedStudentsNewImport } from './routes/_authenticated/students/new'
+import { Route as AuthenticatedLessonsNewImport } from './routes/_authenticated/lessons/new'
+import { Route as AuthenticatedLessonsLessonIdImport } from './routes/_authenticated/lessons/$lessonId'
+import { Route as AuthenticatedInstructorsNewImport } from './routes/_authenticated/instructors/new'
+import { Route as AuthenticatedInstructorsInstructorIdImport } from './routes/_authenticated/instructors/$instructorId'
+import { Route as AuthenticatedStudentsStudentIdIndexImport } from './routes/_authenticated/students/$studentId/index'
+import { Route as AuthenticatedStudentsStudentIdEditImport } from './routes/_authenticated/students/$studentId/edit'
 
 // Create/Update Routes
 
@@ -38,75 +38,77 @@ const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedHabilidadesRoute = AuthenticatedHabilidadesImport.update({
-  id: '/habilidades',
-  path: '/habilidades',
+const AuthenticatedSkillsRoute = AuthenticatedSkillsImport.update({
+  id: '/skills',
+  path: '/skills',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedInstructoresIndexRoute =
-  AuthenticatedInstructoresIndexImport.update({
-    id: '/instructores/',
-    path: '/instructores/',
+const AuthenticatedStudentsIndexRoute = AuthenticatedStudentsIndexImport.update(
+  {
+    id: '/students/',
+    path: '/students/',
     getParentRoute: () => AuthenticatedRoute,
-  } as any)
+  } as any,
+)
 
-const AuthenticatedClasesIndexRoute = AuthenticatedClasesIndexImport.update({
-  id: '/clases/',
-  path: '/clases/',
+const AuthenticatedLessonsIndexRoute = AuthenticatedLessonsIndexImport.update({
+  id: '/lessons/',
+  path: '/lessons/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedAlumnosIndexRoute = AuthenticatedAlumnosIndexImport.update({
-  id: '/alumnos/',
-  path: '/alumnos/',
+const AuthenticatedInstructorsIndexRoute =
+  AuthenticatedInstructorsIndexImport.update({
+    id: '/instructors/',
+    path: '/instructors/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedStudentsNewRoute = AuthenticatedStudentsNewImport.update({
+  id: '/students/new',
+  path: '/students/new',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedInstructoresNuevoRoute =
-  AuthenticatedInstructoresNuevoImport.update({
-    id: '/instructores/nuevo',
-    path: '/instructores/nuevo',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
-const AuthenticatedInstructoresInstructorIdRoute =
-  AuthenticatedInstructoresInstructorIdImport.update({
-    id: '/instructores/$instructorId',
-    path: '/instructores/$instructorId',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-
-const AuthenticatedClasesNuevaRoute = AuthenticatedClasesNuevaImport.update({
-  id: '/clases/nueva',
-  path: '/clases/nueva',
+const AuthenticatedLessonsNewRoute = AuthenticatedLessonsNewImport.update({
+  id: '/lessons/new',
+  path: '/lessons/new',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
-const AuthenticatedClasesLessonIdRoute =
-  AuthenticatedClasesLessonIdImport.update({
-    id: '/clases/$lessonId',
-    path: '/clases/$lessonId',
+const AuthenticatedLessonsLessonIdRoute =
+  AuthenticatedLessonsLessonIdImport.update({
+    id: '/lessons/$lessonId',
+    path: '/lessons/$lessonId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedAlumnosNuevoRoute = AuthenticatedAlumnosNuevoImport.update({
-  id: '/alumnos/nuevo',
-  path: '/alumnos/nuevo',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-
-const AuthenticatedAlumnosStudentIdIndexRoute =
-  AuthenticatedAlumnosStudentIdIndexImport.update({
-    id: '/alumnos/$studentId/',
-    path: '/alumnos/$studentId/',
+const AuthenticatedInstructorsNewRoute =
+  AuthenticatedInstructorsNewImport.update({
+    id: '/instructors/new',
+    path: '/instructors/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
-const AuthenticatedAlumnosStudentIdEditarRoute =
-  AuthenticatedAlumnosStudentIdEditarImport.update({
-    id: '/alumnos/$studentId/editar',
-    path: '/alumnos/$studentId/editar',
+const AuthenticatedInstructorsInstructorIdRoute =
+  AuthenticatedInstructorsInstructorIdImport.update({
+    id: '/instructors/$instructorId',
+    path: '/instructors/$instructorId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedStudentsStudentIdIndexRoute =
+  AuthenticatedStudentsStudentIdIndexImport.update({
+    id: '/students/$studentId/',
+    path: '/students/$studentId/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+
+const AuthenticatedStudentsStudentIdEditRoute =
+  AuthenticatedStudentsStudentIdEditImport.update({
+    id: '/students/$studentId/edit',
+    path: '/students/$studentId/edit',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 
@@ -121,11 +123,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
-    '/_authenticated/habilidades': {
-      id: '/_authenticated/habilidades'
-      path: '/habilidades'
-      fullPath: '/habilidades'
-      preLoaderRoute: typeof AuthenticatedHabilidadesImport
+    '/_authenticated/skills': {
+      id: '/_authenticated/skills'
+      path: '/skills'
+      fullPath: '/skills'
+      preLoaderRoute: typeof AuthenticatedSkillsImport
       parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/': {
@@ -135,74 +137,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/alumnos/nuevo': {
-      id: '/_authenticated/alumnos/nuevo'
-      path: '/alumnos/nuevo'
-      fullPath: '/alumnos/nuevo'
-      preLoaderRoute: typeof AuthenticatedAlumnosNuevoImport
+    '/_authenticated/instructors/$instructorId': {
+      id: '/_authenticated/instructors/$instructorId'
+      path: '/instructors/$instructorId'
+      fullPath: '/instructors/$instructorId'
+      preLoaderRoute: typeof AuthenticatedInstructorsInstructorIdImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/clases/$lessonId': {
-      id: '/_authenticated/clases/$lessonId'
-      path: '/clases/$lessonId'
-      fullPath: '/clases/$lessonId'
-      preLoaderRoute: typeof AuthenticatedClasesLessonIdImport
+    '/_authenticated/instructors/new': {
+      id: '/_authenticated/instructors/new'
+      path: '/instructors/new'
+      fullPath: '/instructors/new'
+      preLoaderRoute: typeof AuthenticatedInstructorsNewImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/clases/nueva': {
-      id: '/_authenticated/clases/nueva'
-      path: '/clases/nueva'
-      fullPath: '/clases/nueva'
-      preLoaderRoute: typeof AuthenticatedClasesNuevaImport
+    '/_authenticated/lessons/$lessonId': {
+      id: '/_authenticated/lessons/$lessonId'
+      path: '/lessons/$lessonId'
+      fullPath: '/lessons/$lessonId'
+      preLoaderRoute: typeof AuthenticatedLessonsLessonIdImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/instructores/$instructorId': {
-      id: '/_authenticated/instructores/$instructorId'
-      path: '/instructores/$instructorId'
-      fullPath: '/instructores/$instructorId'
-      preLoaderRoute: typeof AuthenticatedInstructoresInstructorIdImport
+    '/_authenticated/lessons/new': {
+      id: '/_authenticated/lessons/new'
+      path: '/lessons/new'
+      fullPath: '/lessons/new'
+      preLoaderRoute: typeof AuthenticatedLessonsNewImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/instructores/nuevo': {
-      id: '/_authenticated/instructores/nuevo'
-      path: '/instructores/nuevo'
-      fullPath: '/instructores/nuevo'
-      preLoaderRoute: typeof AuthenticatedInstructoresNuevoImport
+    '/_authenticated/students/new': {
+      id: '/_authenticated/students/new'
+      path: '/students/new'
+      fullPath: '/students/new'
+      preLoaderRoute: typeof AuthenticatedStudentsNewImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/alumnos/': {
-      id: '/_authenticated/alumnos/'
-      path: '/alumnos'
-      fullPath: '/alumnos'
-      preLoaderRoute: typeof AuthenticatedAlumnosIndexImport
+    '/_authenticated/instructors/': {
+      id: '/_authenticated/instructors/'
+      path: '/instructors'
+      fullPath: '/instructors'
+      preLoaderRoute: typeof AuthenticatedInstructorsIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/clases/': {
-      id: '/_authenticated/clases/'
-      path: '/clases'
-      fullPath: '/clases'
-      preLoaderRoute: typeof AuthenticatedClasesIndexImport
+    '/_authenticated/lessons/': {
+      id: '/_authenticated/lessons/'
+      path: '/lessons'
+      fullPath: '/lessons'
+      preLoaderRoute: typeof AuthenticatedLessonsIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/instructores/': {
-      id: '/_authenticated/instructores/'
-      path: '/instructores'
-      fullPath: '/instructores'
-      preLoaderRoute: typeof AuthenticatedInstructoresIndexImport
+    '/_authenticated/students/': {
+      id: '/_authenticated/students/'
+      path: '/students'
+      fullPath: '/students'
+      preLoaderRoute: typeof AuthenticatedStudentsIndexImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/alumnos/$studentId/editar': {
-      id: '/_authenticated/alumnos/$studentId/editar'
-      path: '/alumnos/$studentId/editar'
-      fullPath: '/alumnos/$studentId/editar'
-      preLoaderRoute: typeof AuthenticatedAlumnosStudentIdEditarImport
+    '/_authenticated/students/$studentId/edit': {
+      id: '/_authenticated/students/$studentId/edit'
+      path: '/students/$studentId/edit'
+      fullPath: '/students/$studentId/edit'
+      preLoaderRoute: typeof AuthenticatedStudentsStudentIdEditImport
       parentRoute: typeof AuthenticatedImport
     }
-    '/_authenticated/alumnos/$studentId/': {
-      id: '/_authenticated/alumnos/$studentId/'
-      path: '/alumnos/$studentId'
-      fullPath: '/alumnos/$studentId'
-      preLoaderRoute: typeof AuthenticatedAlumnosStudentIdIndexImport
+    '/_authenticated/students/$studentId/': {
+      id: '/_authenticated/students/$studentId/'
+      path: '/students/$studentId'
+      fullPath: '/students/$studentId'
+      preLoaderRoute: typeof AuthenticatedStudentsStudentIdIndexImport
       parentRoute: typeof AuthenticatedImport
     }
   }
@@ -211,36 +213,36 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedHabilidadesRoute: typeof AuthenticatedHabilidadesRoute
+  AuthenticatedSkillsRoute: typeof AuthenticatedSkillsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
-  AuthenticatedAlumnosNuevoRoute: typeof AuthenticatedAlumnosNuevoRoute
-  AuthenticatedClasesLessonIdRoute: typeof AuthenticatedClasesLessonIdRoute
-  AuthenticatedClasesNuevaRoute: typeof AuthenticatedClasesNuevaRoute
-  AuthenticatedInstructoresInstructorIdRoute: typeof AuthenticatedInstructoresInstructorIdRoute
-  AuthenticatedInstructoresNuevoRoute: typeof AuthenticatedInstructoresNuevoRoute
-  AuthenticatedAlumnosIndexRoute: typeof AuthenticatedAlumnosIndexRoute
-  AuthenticatedClasesIndexRoute: typeof AuthenticatedClasesIndexRoute
-  AuthenticatedInstructoresIndexRoute: typeof AuthenticatedInstructoresIndexRoute
-  AuthenticatedAlumnosStudentIdEditarRoute: typeof AuthenticatedAlumnosStudentIdEditarRoute
-  AuthenticatedAlumnosStudentIdIndexRoute: typeof AuthenticatedAlumnosStudentIdIndexRoute
+  AuthenticatedInstructorsInstructorIdRoute: typeof AuthenticatedInstructorsInstructorIdRoute
+  AuthenticatedInstructorsNewRoute: typeof AuthenticatedInstructorsNewRoute
+  AuthenticatedLessonsLessonIdRoute: typeof AuthenticatedLessonsLessonIdRoute
+  AuthenticatedLessonsNewRoute: typeof AuthenticatedLessonsNewRoute
+  AuthenticatedStudentsNewRoute: typeof AuthenticatedStudentsNewRoute
+  AuthenticatedInstructorsIndexRoute: typeof AuthenticatedInstructorsIndexRoute
+  AuthenticatedLessonsIndexRoute: typeof AuthenticatedLessonsIndexRoute
+  AuthenticatedStudentsIndexRoute: typeof AuthenticatedStudentsIndexRoute
+  AuthenticatedStudentsStudentIdEditRoute: typeof AuthenticatedStudentsStudentIdEditRoute
+  AuthenticatedStudentsStudentIdIndexRoute: typeof AuthenticatedStudentsStudentIdIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedHabilidadesRoute: AuthenticatedHabilidadesRoute,
+  AuthenticatedSkillsRoute: AuthenticatedSkillsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
-  AuthenticatedAlumnosNuevoRoute: AuthenticatedAlumnosNuevoRoute,
-  AuthenticatedClasesLessonIdRoute: AuthenticatedClasesLessonIdRoute,
-  AuthenticatedClasesNuevaRoute: AuthenticatedClasesNuevaRoute,
-  AuthenticatedInstructoresInstructorIdRoute:
-    AuthenticatedInstructoresInstructorIdRoute,
-  AuthenticatedInstructoresNuevoRoute: AuthenticatedInstructoresNuevoRoute,
-  AuthenticatedAlumnosIndexRoute: AuthenticatedAlumnosIndexRoute,
-  AuthenticatedClasesIndexRoute: AuthenticatedClasesIndexRoute,
-  AuthenticatedInstructoresIndexRoute: AuthenticatedInstructoresIndexRoute,
-  AuthenticatedAlumnosStudentIdEditarRoute:
-    AuthenticatedAlumnosStudentIdEditarRoute,
-  AuthenticatedAlumnosStudentIdIndexRoute:
-    AuthenticatedAlumnosStudentIdIndexRoute,
+  AuthenticatedInstructorsInstructorIdRoute:
+    AuthenticatedInstructorsInstructorIdRoute,
+  AuthenticatedInstructorsNewRoute: AuthenticatedInstructorsNewRoute,
+  AuthenticatedLessonsLessonIdRoute: AuthenticatedLessonsLessonIdRoute,
+  AuthenticatedLessonsNewRoute: AuthenticatedLessonsNewRoute,
+  AuthenticatedStudentsNewRoute: AuthenticatedStudentsNewRoute,
+  AuthenticatedInstructorsIndexRoute: AuthenticatedInstructorsIndexRoute,
+  AuthenticatedLessonsIndexRoute: AuthenticatedLessonsIndexRoute,
+  AuthenticatedStudentsIndexRoute: AuthenticatedStudentsIndexRoute,
+  AuthenticatedStudentsStudentIdEditRoute:
+    AuthenticatedStudentsStudentIdEditRoute,
+  AuthenticatedStudentsStudentIdIndexRoute:
+    AuthenticatedStudentsStudentIdIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -249,97 +251,97 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
-  '/habilidades': typeof AuthenticatedHabilidadesRoute
+  '/skills': typeof AuthenticatedSkillsRoute
   '/': typeof AuthenticatedIndexRoute
-  '/alumnos/nuevo': typeof AuthenticatedAlumnosNuevoRoute
-  '/clases/$lessonId': typeof AuthenticatedClasesLessonIdRoute
-  '/clases/nueva': typeof AuthenticatedClasesNuevaRoute
-  '/instructores/$instructorId': typeof AuthenticatedInstructoresInstructorIdRoute
-  '/instructores/nuevo': typeof AuthenticatedInstructoresNuevoRoute
-  '/alumnos': typeof AuthenticatedAlumnosIndexRoute
-  '/clases': typeof AuthenticatedClasesIndexRoute
-  '/instructores': typeof AuthenticatedInstructoresIndexRoute
-  '/alumnos/$studentId/editar': typeof AuthenticatedAlumnosStudentIdEditarRoute
-  '/alumnos/$studentId': typeof AuthenticatedAlumnosStudentIdIndexRoute
+  '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
+  '/instructors/new': typeof AuthenticatedInstructorsNewRoute
+  '/lessons/$lessonId': typeof AuthenticatedLessonsLessonIdRoute
+  '/lessons/new': typeof AuthenticatedLessonsNewRoute
+  '/students/new': typeof AuthenticatedStudentsNewRoute
+  '/instructors': typeof AuthenticatedInstructorsIndexRoute
+  '/lessons': typeof AuthenticatedLessonsIndexRoute
+  '/students': typeof AuthenticatedStudentsIndexRoute
+  '/students/$studentId/edit': typeof AuthenticatedStudentsStudentIdEditRoute
+  '/students/$studentId': typeof AuthenticatedStudentsStudentIdIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/habilidades': typeof AuthenticatedHabilidadesRoute
+  '/skills': typeof AuthenticatedSkillsRoute
   '/': typeof AuthenticatedIndexRoute
-  '/alumnos/nuevo': typeof AuthenticatedAlumnosNuevoRoute
-  '/clases/$lessonId': typeof AuthenticatedClasesLessonIdRoute
-  '/clases/nueva': typeof AuthenticatedClasesNuevaRoute
-  '/instructores/$instructorId': typeof AuthenticatedInstructoresInstructorIdRoute
-  '/instructores/nuevo': typeof AuthenticatedInstructoresNuevoRoute
-  '/alumnos': typeof AuthenticatedAlumnosIndexRoute
-  '/clases': typeof AuthenticatedClasesIndexRoute
-  '/instructores': typeof AuthenticatedInstructoresIndexRoute
-  '/alumnos/$studentId/editar': typeof AuthenticatedAlumnosStudentIdEditarRoute
-  '/alumnos/$studentId': typeof AuthenticatedAlumnosStudentIdIndexRoute
+  '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
+  '/instructors/new': typeof AuthenticatedInstructorsNewRoute
+  '/lessons/$lessonId': typeof AuthenticatedLessonsLessonIdRoute
+  '/lessons/new': typeof AuthenticatedLessonsNewRoute
+  '/students/new': typeof AuthenticatedStudentsNewRoute
+  '/instructors': typeof AuthenticatedInstructorsIndexRoute
+  '/lessons': typeof AuthenticatedLessonsIndexRoute
+  '/students': typeof AuthenticatedStudentsIndexRoute
+  '/students/$studentId/edit': typeof AuthenticatedStudentsStudentIdEditRoute
+  '/students/$studentId': typeof AuthenticatedStudentsStudentIdIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/_authenticated/habilidades': typeof AuthenticatedHabilidadesRoute
+  '/_authenticated/skills': typeof AuthenticatedSkillsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
-  '/_authenticated/alumnos/nuevo': typeof AuthenticatedAlumnosNuevoRoute
-  '/_authenticated/clases/$lessonId': typeof AuthenticatedClasesLessonIdRoute
-  '/_authenticated/clases/nueva': typeof AuthenticatedClasesNuevaRoute
-  '/_authenticated/instructores/$instructorId': typeof AuthenticatedInstructoresInstructorIdRoute
-  '/_authenticated/instructores/nuevo': typeof AuthenticatedInstructoresNuevoRoute
-  '/_authenticated/alumnos/': typeof AuthenticatedAlumnosIndexRoute
-  '/_authenticated/clases/': typeof AuthenticatedClasesIndexRoute
-  '/_authenticated/instructores/': typeof AuthenticatedInstructoresIndexRoute
-  '/_authenticated/alumnos/$studentId/editar': typeof AuthenticatedAlumnosStudentIdEditarRoute
-  '/_authenticated/alumnos/$studentId/': typeof AuthenticatedAlumnosStudentIdIndexRoute
+  '/_authenticated/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
+  '/_authenticated/instructors/new': typeof AuthenticatedInstructorsNewRoute
+  '/_authenticated/lessons/$lessonId': typeof AuthenticatedLessonsLessonIdRoute
+  '/_authenticated/lessons/new': typeof AuthenticatedLessonsNewRoute
+  '/_authenticated/students/new': typeof AuthenticatedStudentsNewRoute
+  '/_authenticated/instructors/': typeof AuthenticatedInstructorsIndexRoute
+  '/_authenticated/lessons/': typeof AuthenticatedLessonsIndexRoute
+  '/_authenticated/students/': typeof AuthenticatedStudentsIndexRoute
+  '/_authenticated/students/$studentId/edit': typeof AuthenticatedStudentsStudentIdEditRoute
+  '/_authenticated/students/$studentId/': typeof AuthenticatedStudentsStudentIdIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
-    | '/habilidades'
+    | '/skills'
     | '/'
-    | '/alumnos/nuevo'
-    | '/clases/$lessonId'
-    | '/clases/nueva'
-    | '/instructores/$instructorId'
-    | '/instructores/nuevo'
-    | '/alumnos'
-    | '/clases'
-    | '/instructores'
-    | '/alumnos/$studentId/editar'
-    | '/alumnos/$studentId'
+    | '/instructors/$instructorId'
+    | '/instructors/new'
+    | '/lessons/$lessonId'
+    | '/lessons/new'
+    | '/students/new'
+    | '/instructors'
+    | '/lessons'
+    | '/students'
+    | '/students/$studentId/edit'
+    | '/students/$studentId'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/habilidades'
+    | '/skills'
     | '/'
-    | '/alumnos/nuevo'
-    | '/clases/$lessonId'
-    | '/clases/nueva'
-    | '/instructores/$instructorId'
-    | '/instructores/nuevo'
-    | '/alumnos'
-    | '/clases'
-    | '/instructores'
-    | '/alumnos/$studentId/editar'
-    | '/alumnos/$studentId'
+    | '/instructors/$instructorId'
+    | '/instructors/new'
+    | '/lessons/$lessonId'
+    | '/lessons/new'
+    | '/students/new'
+    | '/instructors'
+    | '/lessons'
+    | '/students'
+    | '/students/$studentId/edit'
+    | '/students/$studentId'
   id:
     | '__root__'
     | '/_authenticated'
-    | '/_authenticated/habilidades'
+    | '/_authenticated/skills'
     | '/_authenticated/'
-    | '/_authenticated/alumnos/nuevo'
-    | '/_authenticated/clases/$lessonId'
-    | '/_authenticated/clases/nueva'
-    | '/_authenticated/instructores/$instructorId'
-    | '/_authenticated/instructores/nuevo'
-    | '/_authenticated/alumnos/'
-    | '/_authenticated/clases/'
-    | '/_authenticated/instructores/'
-    | '/_authenticated/alumnos/$studentId/editar'
-    | '/_authenticated/alumnos/$studentId/'
+    | '/_authenticated/instructors/$instructorId'
+    | '/_authenticated/instructors/new'
+    | '/_authenticated/lessons/$lessonId'
+    | '/_authenticated/lessons/new'
+    | '/_authenticated/students/new'
+    | '/_authenticated/instructors/'
+    | '/_authenticated/lessons/'
+    | '/_authenticated/students/'
+    | '/_authenticated/students/$studentId/edit'
+    | '/_authenticated/students/$studentId/'
   fileRoutesById: FileRoutesById
 }
 
@@ -367,66 +369,66 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
-        "/_authenticated/habilidades",
+        "/_authenticated/skills",
         "/_authenticated/",
-        "/_authenticated/alumnos/nuevo",
-        "/_authenticated/clases/$lessonId",
-        "/_authenticated/clases/nueva",
-        "/_authenticated/instructores/$instructorId",
-        "/_authenticated/instructores/nuevo",
-        "/_authenticated/alumnos/",
-        "/_authenticated/clases/",
-        "/_authenticated/instructores/",
-        "/_authenticated/alumnos/$studentId/editar",
-        "/_authenticated/alumnos/$studentId/"
+        "/_authenticated/instructors/$instructorId",
+        "/_authenticated/instructors/new",
+        "/_authenticated/lessons/$lessonId",
+        "/_authenticated/lessons/new",
+        "/_authenticated/students/new",
+        "/_authenticated/instructors/",
+        "/_authenticated/lessons/",
+        "/_authenticated/students/",
+        "/_authenticated/students/$studentId/edit",
+        "/_authenticated/students/$studentId/"
       ]
     },
-    "/_authenticated/habilidades": {
-      "filePath": "_authenticated/habilidades.tsx",
+    "/_authenticated/skills": {
+      "filePath": "_authenticated/skills.tsx",
       "parent": "/_authenticated"
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/alumnos/nuevo": {
-      "filePath": "_authenticated/alumnos/nuevo.tsx",
+    "/_authenticated/instructors/$instructorId": {
+      "filePath": "_authenticated/instructors/$instructorId.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/clases/$lessonId": {
-      "filePath": "_authenticated/clases/$lessonId.tsx",
+    "/_authenticated/instructors/new": {
+      "filePath": "_authenticated/instructors/new.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/clases/nueva": {
-      "filePath": "_authenticated/clases/nueva.tsx",
+    "/_authenticated/lessons/$lessonId": {
+      "filePath": "_authenticated/lessons/$lessonId.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/instructores/$instructorId": {
-      "filePath": "_authenticated/instructores/$instructorId.tsx",
+    "/_authenticated/lessons/new": {
+      "filePath": "_authenticated/lessons/new.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/instructores/nuevo": {
-      "filePath": "_authenticated/instructores/nuevo.tsx",
+    "/_authenticated/students/new": {
+      "filePath": "_authenticated/students/new.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/alumnos/": {
-      "filePath": "_authenticated/alumnos/index.tsx",
+    "/_authenticated/instructors/": {
+      "filePath": "_authenticated/instructors/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/clases/": {
-      "filePath": "_authenticated/clases/index.tsx",
+    "/_authenticated/lessons/": {
+      "filePath": "_authenticated/lessons/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/instructores/": {
-      "filePath": "_authenticated/instructores/index.tsx",
+    "/_authenticated/students/": {
+      "filePath": "_authenticated/students/index.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/alumnos/$studentId/editar": {
-      "filePath": "_authenticated/alumnos/$studentId/editar.tsx",
+    "/_authenticated/students/$studentId/edit": {
+      "filePath": "_authenticated/students/$studentId/edit.tsx",
       "parent": "/_authenticated"
     },
-    "/_authenticated/alumnos/$studentId/": {
-      "filePath": "_authenticated/alumnos/$studentId/index.tsx",
+    "/_authenticated/students/$studentId/": {
+      "filePath": "_authenticated/students/$studentId/index.tsx",
       "parent": "/_authenticated"
     }
   }

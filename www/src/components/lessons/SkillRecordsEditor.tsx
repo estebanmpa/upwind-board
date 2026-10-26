@@ -69,9 +69,7 @@ function SkillLeafRow({ node, value, onChange, currentStatuses }: NodeProps) {
           {node.name}
         </Text>
         <Text fz="xs" c="dimmed">
-          {current
-            ? `Último registro: ${SKILL_STATUS_LABELS[current]}`
-            : 'Nunca trabajado'}
+          {current ? `Last recorded: ${SKILL_STATUS_LABELS[current]}` : 'Never worked on'}
         </Text>
       </div>
       <SegmentedControl
@@ -125,7 +123,7 @@ export function SkillRecordsEditor({ tree, ...props }: SkillRecordsEditorProps) 
                 </Text>
                 {worked > 0 && (
                   <Badge variant="gradient" size="sm">
-                    {worked} {worked === 1 ? 'habilidad' : 'habilidades'}
+                    {worked} {worked === 1 ? 'skill' : 'skills'}
                   </Badge>
                 )}
               </Group>

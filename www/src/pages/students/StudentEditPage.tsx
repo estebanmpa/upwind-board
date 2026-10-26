@@ -16,8 +16,8 @@ export function StudentEditPage({ studentId }: { studentId: string }) {
   function save(input: StudentInput) {
     updateStudent.mutate(input, {
       onSuccess: () => {
-        notifySuccess('Cambios guardados');
-        navigate({ to: '/alumnos/$studentId', params: { studentId } });
+        notifySuccess('Changes saved');
+        navigate({ to: '/students/$studentId', params: { studentId } });
       },
       onError: notifyError,
     });
@@ -25,10 +25,10 @@ export function StudentEditPage({ studentId }: { studentId: string }) {
 
   return (
     <>
-      <PageHeader title="Editar alumno" description={fullName(student)} />
+      <PageHeader title="Edit student" description={fullName(student)} />
       <StudentForm
         student={student}
-        submitLabel="Guardar cambios"
+        submitLabel="Save changes"
         isSubmitting={updateStudent.isPending}
         onSubmit={save}
       />

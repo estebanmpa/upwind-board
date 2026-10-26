@@ -5,11 +5,11 @@ import { EmptyState } from './EmptyState';
 export function NotFound() {
   return (
     <EmptyState
-      title="Página no encontrada"
-      description="El contenido que buscás no existe o fue eliminado."
+      title="Page not found"
+      description="The content you are looking for does not exist or was deleted."
       action={
         <Button component={Link} to="/" mt="md">
-          Volver al resumen
+          Back to dashboard
         </Button>
       }
     />

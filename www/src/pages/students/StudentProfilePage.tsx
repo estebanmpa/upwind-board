@@ -34,7 +34,7 @@ import { currentLevel, masteredPercent } from '@/utils/progress';
 
 function ProfileHeader({ student }: { student: Student }) {
   const details = [
-    student.birthDate && `${calculateAge(student.birthDate)} años`,
+    student.birthDate && `${calculateAge(student.birthDate)} years old`,
     student.weightKg && `${student.weightKg} kg`,
     student.phone,
   ].filter(Boolean);
@@ -53,22 +53,22 @@ function ProfileHeader({ student }: { student: Student }) {
           renderRoot={(props) => (
             <Link
               {...props}
-              to="/alumnos/$studentId/editar"
+              to="/students/$studentId/edit"
               params={{ studentId: student.id }}
             />
           )}
           leftSection={<IconEdit size={18} />}
         >
-          Editar
+          Edit
         </Button>
         <Button
           variant="gradient"
           renderRoot={(props) => (
-            <Link {...props} to="/clases/nueva" search={{ studentId: student.id }} />
+            <Link {...props} to="/lessons/new" search={{ studentId: student.id }} />
           )}
           leftSection={<IconPlus size={18} />}
         >
-          Registrar clase
+          Log lesson
         </Button>
       </Group>
     </Group>
@@ -92,32 +92,32 @@ function StudentInfo({ student }: { student: Student }) {
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card withBorder padding="lg">
           <Title order={4} mb="md">
-            Contacto
+            Contact
           </Title>
           <Stack gap="sm">
-            <InfoRow label="Teléfono" value={student.phone} />
+            <InfoRow label="Phone" value={student.phone} />
             <InfoRow label="Email" value={student.email} />
-            <InfoRow label="Fecha de nacimiento" value={student.birthDate} />
+            <InfoRow label="Birth date" value={student.birthDate} />
           </Stack>
         </Card>
       </Grid.Col>
       <Grid.Col span={{ base: 12, md: 6 }}>
         <Card withBorder padding="lg">
           <Title order={4} mb="md">
-            Emergencias
+            Emergency
           </Title>
           <Stack gap="sm">
-            <InfoRow label="Contacto" value={student.emergencyContactName} />
-            <InfoRow label="Teléfono" value={student.emergencyContactPhone} />
+            <InfoRow label="Contact" value={student.emergencyContactName} />
+            <InfoRow label="Phone" value={student.emergencyContactPhone} />
           </Stack>
         </Card>
       </Grid.Col>
       <Grid.Col span={12}>
         <Card withBorder padding="lg">
           <Title order={4} mb="xs">
-            Notas
+            Notes
           </Title>
-          <Text style={{ whiteSpace: 'pre-wrap' }}>{student.notes || 'Sin notas'}</Text>
+          <Text style={{ whiteSpace: 'pre-wrap' }}>{student.notes || 'No notes'}</Text>
         </Card>
       </Grid.Col>
     </Grid>
@@ -136,31 +136,31 @@ export function StudentProfilePage({ studentId }: { studentId: string }) {
       <ProfileHeader student={student} />
       <SimpleGrid cols={{ base: 1, xs: 2, lg: 4 }} mb="xl" className="fade-in-up">
         <StatCard
-          label="Clases"
+          label="Lessons"
           value={progress.totalLessons}
           icon={IconCalendarEvent}
           color="brand"
         />
         <StatCard
-          label="Horas en el agua"
+          label="Hours on the water"
           value={formatHours(progress.totalHours)}
           icon={IconClockHour4}
           color="teal"
         />
         <StatCard
-          label="Dominadas"
+          label="Mastered"
           value={`${summary.mastered}/${summary.totalSkills}`}
           icon={IconTrophy}
           color="orange"
           hint={
-            level ? `Trabajando ${level.code} · ${level.name}` : 'Progresión completa'
+            level ? `Working on ${level.code} · ${level.name}` : 'Progression complete'
           }
         />
         <Card withBorder padding="lg" className="hover-lift">
           <Group justify="space-between" wrap="nowrap">
             <div>
               <Text fz="xs" c="dimmed" tt="uppercase" fw={700}>
-                Progreso IKO
+                IKO progress
               </Text>
               <Text fz={28} fw={800}>
                 {percent}%
@@ -179,13 +179,13 @@ export function StudentProfilePage({ studentId }: { studentId: string }) {
       <Tabs defaultValue="progress" variant="pills" radius="xl">
         <Tabs.List mb="lg">
           <Tabs.Tab value="progress" leftSection={<IconListTree size={16} />}>
-            Progresión
+            Progression
           </Tabs.Tab>
           <Tabs.Tab value="history" leftSection={<IconTimeline size={16} />}>
-            Historial
+            History
           </Tabs.Tab>
           <Tabs.Tab value="info" leftSection={<IconId size={16} />}>
-            Ficha
+            Details
           </Tabs.Tab>
         </Tabs.List>
         <Tabs.Panel value="progress">

@@ -63,7 +63,7 @@ function useInstructorOptions(currentInstructor?: PersonSummary) {
   if (currentInstructor && !instructors.some((i) => i.id === currentInstructor.id)) {
     options.push({
       value: currentInstructor.id,
-      label: `${fullName(currentInstructor)} (inactivo)`,
+      label: `${fullName(currentInstructor)} (inactive)`,
     });
   }
   return options;
@@ -125,7 +125,7 @@ export function LessonForm({
             <Stack>
               <Paper withBorder p="lg" className="fade-in-up">
                 <Title order={4} mb="md">
-                  Clase
+                  Lesson
                 </Title>
                 <Grid>
                   <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -149,7 +149,7 @@ export function LessonForm({
                       name="startsAt"
                       render={({ field }) => (
                         <DateTimePicker
-                          label="Fecha y hora"
+                          label="Date and time"
                           valueFormat="DD/MM/YYYY HH:mm"
                           {...field}
                           error={errors.startsAt?.message}
@@ -171,7 +171,7 @@ export function LessonForm({
                       name="durationMinutes"
                       render={({ field }) => (
                         <NumberInput
-                          label="Duración"
+                          label="Duration"
                           suffix=" min"
                           step={15}
                           min={1}
@@ -191,7 +191,7 @@ export function LessonForm({
                       name="windDirection"
                       render={({ field }) => (
                         <Select
-                          label="Dirección del viento"
+                          label="Wind direction"
                           placeholder="—"
                           data={[...WIND_DIRECTIONS]}
                           searchable
@@ -208,9 +208,7 @@ export function LessonForm({
                         name={name}
                         render={({ field }) => (
                           <NumberInput
-                            label={
-                              name === 'windMinKnots' ? 'Viento mín.' : 'Viento máx.'
-                            }
+                            label={name === 'windMinKnots' ? 'Min wind' : 'Max wind'}
                             suffix=" kn"
                             min={0}
                             max={99}
@@ -225,7 +223,7 @@ export function LessonForm({
                   ))}
                   <Grid.Col span={12}>
                     <Textarea
-                      label="Notas de la clase"
+                      label="Lesson notes"
                       autosize
                       minRows={2}
                       {...register('notes')}
@@ -235,9 +233,9 @@ export function LessonForm({
               </Paper>
 
               <Group justify="space-between" mt="md">
-                <Title order={4}>Alumnos</Title>
+                <Title order={4}>Students</Title>
                 <Text c="dimmed" fz="sm">
-                  {fields.length} en la clase
+                  {fields.length} in the lesson
                 </Text>
               </Group>
               <StudentPicker
@@ -252,8 +250,8 @@ export function LessonForm({
               {fields.length === 0 ? (
                 <Paper withBorder p="lg">
                   <EmptyState
-                    title="Sin alumnos"
-                    description="Buscá y agregá los alumnos que tomaron la clase."
+                    title="No students"
+                    description="Search for and add the students who took the lesson."
                   />
                 </Paper>
               ) : (
@@ -272,18 +270,18 @@ export function LessonForm({
           <Grid.Col span={{ base: 12, md: 4 }}>
             <Paper withBorder p="lg" className="sticky-aside glass">
               <Stack gap="xs">
-                <Title order={4}>Resumen</Title>
+                <Title order={4}>Summary</Title>
                 <SummaryRow
-                  label="Fecha"
+                  label="Date"
                   value={startsAt ? formatDateTime(startsAt.toISOString()) : '—'}
                 />
                 <SummaryRow
-                  label="Duración"
+                  label="Duration"
                   value={durationMinutes ? formatDuration(durationMinutes) : '—'}
                 />
-                <SummaryRow label="Alumnos" value={String(students?.length ?? 0)} />
+                <SummaryRow label="Students" value={String(students?.length ?? 0)} />
                 <SummaryRow
-                  label="Habilidades registradas"
+                  label="Skills recorded"
                   value={String(countRecords(students ?? []))}
                 />
                 <Divider my="xs" />
@@ -301,7 +299,7 @@ export function LessonForm({
                 <Group gap={6} mt="xs" wrap="nowrap">
                   <IconUsers size={14} color="var(--mantine-color-dimmed)" />
                   <Text fz="xs" c="dimmed">
-                    Cada alumno guarda su propio registro de habilidades.
+                    Each student keeps their own skill records.
                   </Text>
                 </Group>
               </Stack>

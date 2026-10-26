@@ -61,32 +61,32 @@ function InstructorRow({
       </Table.Td>
       <Table.Td>
         <Badge variant="dot" color={instructor.active ? 'teal' : 'gray'}>
-          {instructor.active ? 'Activo' : 'Inactivo'}
+          {instructor.active ? 'Active' : 'Inactive'}
         </Badge>
       </Table.Td>
       <Table.Td>
         <Group gap={4} justify="end" wrap="nowrap">
-          <Tooltip label="Editar">
+          <Tooltip label="Edit">
             <ActionIcon
               variant="subtle"
               renderRoot={(props) => (
                 <Link
                   {...props}
-                  to="/instructores/$instructorId"
+                  to="/instructors/$instructorId"
                   params={{ instructorId: instructor.id }}
                 />
               )}
-              aria-label="Editar"
+              aria-label="Edit"
             >
               <IconEdit size={18} />
             </ActionIcon>
           </Tooltip>
-          <Tooltip label="Eliminar">
+          <Tooltip label="Delete">
             <ActionIcon
               variant="subtle"
               color="red"
               onClick={onDelete}
-              aria-label="Eliminar"
+              aria-label="Delete"
             >
               <IconTrash size={18} />
             </ActionIcon>
@@ -113,22 +113,22 @@ export function InstructorsPage() {
   return (
     <>
       <PageHeader
-        title="Instructores"
-        description="Equipo de la escuela"
+        title="Instructors"
+        description="School team"
         actions={
           <Button
             component={Link}
-            to="/instructores/nuevo"
+            to="/instructors/new"
             leftSection={<IconPlus size={18} />}
           >
-            Nuevo instructor
+            New instructor
           </Button>
         }
       />
       <Card withBorder padding="lg" className="fade-in-up">
         <Group mb="md">
           <TextInput
-            placeholder="Buscar por nombre o apellido"
+            placeholder="Search by first or last name"
             leftSection={<IconSearch size={16} />}
             value={search}
             onChange={(event) => setSearch(event.currentTarget.value)}
@@ -142,16 +142,13 @@ export function InstructorsPage() {
               setPage(1);
             }}
             data={[
-              { value: 'active', label: 'Activos' },
-              { value: 'all', label: 'Todos' },
+              { value: 'active', label: 'Active' },
+              { value: 'all', label: 'All' },
             ]}
           />
         </Group>
         {!isPending && data?.items.length === 0 ? (
-          <EmptyState
-            title="Sin instructores"
-            description="No hay instructores que coincidan."
-          />
+          <EmptyState title="No instructors" description="No instructors match." />
         ) : (
           <>
             <Table.ScrollContainer minWidth={680}>
@@ -159,9 +156,9 @@ export function InstructorsPage() {
                 <Table.Thead>
                   <Table.Tr>
                     <Table.Th>Instructor</Table.Th>
-                    <Table.Th>Teléfono</Table.Th>
-                    <Table.Th>Certificación</Table.Th>
-                    <Table.Th>Estado</Table.Th>
+                    <Table.Th>Phone</Table.Th>
+                    <Table.Th>Certification</Table.Th>
+                    <Table.Th>Status</Table.Th>
                     <Table.Th />
                   </Table.Tr>
                 </Table.Thead>
@@ -172,9 +169,9 @@ export function InstructorsPage() {
                       instructor={instructor}
                       onDelete={() =>
                         confirmDelete(instructor.id, {
-                          title: 'Eliminar instructor',
-                          message: `¿Seguro que querés eliminar a ${fullName(instructor)}? Si tiene clases, desactivalo en su lugar.`,
-                          successMessage: 'Instructor eliminado',
+                          title: 'Delete instructor',
+                          message: `Are you sure you want to delete ${fullName(instructor)}? If they have lessons, deactivate them instead.`,
+                          successMessage: 'Instructor deleted',
                         })
                       }
                     />

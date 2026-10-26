@@ -1,4 +1,4 @@
-/** 16-point compass rose using Spanish initials (O = oeste). */
+/** 16-point compass rose using English initials. */
 export const WIND_DIRECTIONS = [
   'N',
   'NNE',
@@ -9,13 +9,13 @@ export const WIND_DIRECTIONS = [
   'SE',
   'SSE',
   'S',
-  'SSO',
-  'SO',
-  'OSO',
-  'O',
-  'ONO',
-  'NO',
-  'NNO',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
 ] as const;
 
 export type WindDirection = (typeof WIND_DIRECTIONS)[number];

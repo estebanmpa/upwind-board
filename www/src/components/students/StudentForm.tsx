@@ -70,25 +70,25 @@ export function StudentForm({
     >
       <Paper withBorder p="lg" maw={860} className="fade-in-up">
         <Stack>
-          <Title order={4}>Datos personales</Title>
+          <Title order={4}>Personal details</Title>
           <Grid>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Nombre"
+                label="First name"
                 {...register('firstName')}
                 error={errors.firstName?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Apellido"
+                label="Last name"
                 {...register('lastName')}
                 error={errors.lastName?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Teléfono"
+                label="Phone"
                 {...register('phone')}
                 error={errors.phone?.message}
               />
@@ -96,7 +96,7 @@ export function StudentForm({
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
                 label="Email"
-                description="Opcional"
+                description="Optional"
                 type="email"
                 {...register('email')}
                 error={errors.email?.message}
@@ -108,8 +108,8 @@ export function StudentForm({
                 name="birthDate"
                 render={({ field }) => (
                   <DateInput
-                    label="Fecha de nacimiento"
-                    description="Opcional"
+                    label="Birth date"
+                    description="Optional"
                     valueFormat="DD/MM/YYYY"
                     maxDate={new Date()}
                     clearable
@@ -125,8 +125,8 @@ export function StudentForm({
                 name="weightKg"
                 render={({ field }) => (
                   <NumberInput
-                    label="Peso"
-                    description="Opcional, ayuda a elegir el tamaño del kite"
+                    label="Weight"
+                    description="Optional, helps choose the kite size"
                     suffix=" kg"
                     min={0}
                     decimalScale={1}
@@ -140,19 +140,19 @@ export function StudentForm({
           </Grid>
 
           <Title order={4} mt="sm">
-            Contacto de emergencia
+            Emergency contact
           </Title>
           <Grid>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Nombre"
+                label="Name"
                 {...register('emergencyContactName')}
                 error={errors.emergencyContactName?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Teléfono"
+                label="Phone"
                 {...register('emergencyContactPhone')}
                 error={errors.emergencyContactPhone?.message}
               />
@@ -160,8 +160,8 @@ export function StudentForm({
           </Grid>
 
           <Textarea
-            label="Notas"
-            description="Experiencia previa, condiciones médicas, objetivos…"
+            label="Notes"
+            description="Previous experience, medical conditions, goals…"
             autosize
             minRows={3}
             {...register('notes')}

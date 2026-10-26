@@ -28,23 +28,23 @@ export function LessonsPage() {
   return (
     <>
       <PageHeader
-        title="Clases"
-        description="Todas las clases registradas, de la más reciente a la más antigua"
+        title="Lessons"
+        description="Every logged lesson, from newest to oldest"
         actions={
           <Button
             component={Link}
-            to="/clases/nueva"
+            to="/lessons/new"
             variant="gradient"
             leftSection={<IconPlus size={18} />}
           >
-            Registrar clase
+            Log lesson
           </Button>
         }
       />
       <Card withBorder padding="lg" className="fade-in-up">
         <Group mb="md">
           <Select
-            placeholder="Todos los instructores"
+            placeholder="All instructors"
             leftSection={<IconSchool size={16} />}
             data={instructorOptions}
             value={instructorId}
@@ -59,11 +59,11 @@ export function LessonsPage() {
         </Group>
         {!isPending && data?.items.length === 0 ? (
           <EmptyState
-            title="No hay clases"
-            description="Cuando registres clases, vas a verlas acá."
+            title="No lessons"
+            description="Lessons you log will show up here."
             action={
-              <Button component={Link} to="/clases/nueva" mt="md">
-                Registrar clase
+              <Button component={Link} to="/lessons/new" mt="md">
+                Log lesson
               </Button>
             }
           />

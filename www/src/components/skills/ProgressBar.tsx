@@ -14,7 +14,7 @@ export function ProgressBar({
   const percentages = summaryPercentages(summary);
   const ordered = [...SKILL_STATUSES].reverse();
   return (
-    <Progress.Root size={size} radius="xl" aria-label="Progreso">
+    <Progress.Root size={size} radius="xl" aria-label="Progress">
       {ordered.map((status) => (
         <Tooltip
           key={status}

@@ -16,8 +16,8 @@ export function InstructorEditPage({ instructorId }: { instructorId: string }) {
   function save(input: InstructorInput) {
     updateInstructor.mutate(input, {
       onSuccess: () => {
-        notifySuccess('Cambios guardados');
-        navigate({ to: '/instructores' });
+        notifySuccess('Changes saved');
+        navigate({ to: '/instructors' });
       },
       onError: notifyError,
     });
@@ -25,10 +25,10 @@ export function InstructorEditPage({ instructorId }: { instructorId: string }) {
 
   return (
     <>
-      <PageHeader title="Editar instructor" description={fullName(instructor)} />
+      <PageHeader title="Edit instructor" description={fullName(instructor)} />
       <InstructorForm
         instructor={instructor}
-        submitLabel="Guardar cambios"
+        submitLabel="Save changes"
         isSubmitting={updateInstructor.isPending}
         onSubmit={save}
       />

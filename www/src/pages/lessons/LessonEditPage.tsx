@@ -18,12 +18,12 @@ export function LessonEditPage({ lessonId }: { lessonId: string }) {
   const deleteLesson = useDeleteLesson();
   const confirmDelete = useConfirmDelete(deleteLesson);
   const navigate = useNavigate();
-  const goToList = () => navigate({ to: '/clases' });
+  const goToList = () => navigate({ to: '/lessons' });
 
   function save(payload: LessonPayload) {
     updateLesson.mutate(payload, {
       onSuccess: () => {
-        notifySuccess('Cambios guardados');
+        notifySuccess('Changes saved');
         goToList();
       },
       onError: notifyError,
@@ -33,13 +33,13 @@ export function LessonEditPage({ lessonId }: { lessonId: string }) {
   return (
     <>
       <PageHeader
-        title="Editar clase"
+        title="Edit lesson"
         description={`${lesson.spot} · ${formatDateTime(lesson.startsAt)}`}
       />
       <LessonForm
         initialValues={lessonToFormValues(lesson)}
         currentInstructor={lesson.instructor}
-        submitLabel="Guardar cambios"
+        submitLabel="Save changes"
         isSubmitting={updateLesson.isPending}
         onSubmit={save}
         extraActions={
@@ -51,15 +51,15 @@ export function LessonEditPage({ lessonId }: { lessonId: string }) {
             leftSection={<IconTrash size={18} />}
             onClick={() =>
               confirmDelete(lessonId, {
-                title: 'Eliminar clase',
+                title: 'Delete lesson',
                 message:
-                  'Se borran también los registros de habilidades de sus alumnos y su progresión se recalcula.',
-                successMessage: 'Clase eliminada',
+                  "Its students' skill records are deleted too and their progression is recalculated.",
+                successMessage: 'Lesson deleted',
                 onDeleted: goToList,
               })
             }
           >
-            Eliminar clase
+            Delete lesson
           </Button>
         }
       />

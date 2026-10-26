@@ -55,8 +55,8 @@ export function StudentLessonTimeline({ studentId }: { studentId: string }) {
   if (!isPending && items.length === 0) {
     return (
       <EmptyState
-        title="Todavía no tomó clases"
-        description="Las clases registradas para este alumno aparecerán acá."
+        title="No lessons yet"
+        description="Lessons logged for this student will show up here."
       />
     );
   }
@@ -79,7 +79,7 @@ export function StudentLessonTimeline({ studentId }: { studentId: string }) {
                   renderRoot={(props) => (
                     <Link
                       {...props}
-                      to="/clases/$lessonId"
+                      to="/lessons/$lessonId"
                       params={{ lessonId: item.lessonId }}
                     />
                   )}
@@ -102,7 +102,7 @@ export function StudentLessonTimeline({ studentId }: { studentId: string }) {
           onClick={() => fetchNextPage()}
           loading={isFetchingNextPage}
         >
-          Cargar más clases
+          Load more lessons
         </Button>
       )}
     </Stack>

@@ -39,30 +39,30 @@ function SkillActionButtons({
 }) {
   return (
     <Group gap={2} wrap="nowrap">
-      <Tooltip label="Agregar sub-habilidad">
+      <Tooltip label="Add sub-skill">
         <ActionIcon
           variant="subtle"
           onClick={() => actions.onAddChild(skill)}
-          aria-label="Agregar sub-habilidad"
+          aria-label="Add sub-skill"
         >
           <IconPlus size={18} />
         </ActionIcon>
       </Tooltip>
-      <Tooltip label="Editar">
+      <Tooltip label="Edit">
         <ActionIcon
           variant="subtle"
           onClick={() => actions.onEdit(skill)}
-          aria-label="Editar"
+          aria-label="Edit"
         >
           <IconEdit size={18} />
         </ActionIcon>
       </Tooltip>
-      <Tooltip label="Eliminar">
+      <Tooltip label="Delete">
         <ActionIcon
           variant="subtle"
           color="red"
           onClick={() => actions.onDelete(skill)}
-          aria-label="Eliminar"
+          aria-label="Delete"
         >
           <IconTrash size={18} />
         </ActionIcon>
@@ -94,7 +94,7 @@ function SkillRow({ skill, actions }: { skill: SkillTreeNode; actions: SkillActi
         </div>
         {!skill.active && (
           <Badge color="gray" variant="outline" size="xs">
-            Inactiva
+            Inactive
           </Badge>
         )}
       </Group>
@@ -140,15 +140,15 @@ function LevelCard({ level, actions }: { level: SkillTreeNode; actions: SkillAct
             <Title order={4} c={level.active ? undefined : 'dimmed'}>
               {level.name}
             </Title>
-            {!level.active && <Badge color="gray">Inactivo</Badge>}
+            {!level.active && <Badge color="gray">Inactive</Badge>}
           </Group>
           <Text fz="sm" c="dimmed">
-            {level.description ?? `${leaves} habilidades evaluables`}
+            {level.description ?? `${leaves} assessable skills`}
           </Text>
         </div>
         <Group gap="sm" wrap="nowrap">
           <Text fz="sm" c="dimmed" visibleFrom="sm">
-            {leaves} evaluables
+            {leaves} assessable
           </Text>
           <SkillActionButtons skill={level} actions={actions} />
         </Group>
@@ -178,16 +178,16 @@ export function SkillsPage() {
     onEdit: (skill) => setModal({ mode: 'edit', skill }),
     onDelete: (skill) =>
       confirmDelete(skill.id, {
-        title: 'Eliminar habilidad',
-        message: `¿Eliminar “${skill.name}”? Solo es posible si no tiene sub-habilidades ni registros en clases; si no, desactivala.`,
-        successMessage: 'Habilidad eliminada',
+        title: 'Delete skill',
+        message: `Delete “${skill.name}”? Only possible if it has no sub-skills or lesson records; otherwise, deactivate it.`,
+        successMessage: 'Skill deleted',
       }),
   };
 
   function save(input: SkillInput) {
     const callbacks = {
       onSuccess: () => {
-        notifySuccess('Habilidad guardada');
+        notifySuccess('Skill saved');
         setModal(null);
       },
       onError: notifyError,
@@ -202,12 +202,12 @@ export function SkillsPage() {
   return (
     <>
       <PageHeader
-        title="Progresión IKO"
-        description="Niveles, habilidades y sub-habilidades. Solo las hojas se evalúan en las clases."
+        title="IKO progression"
+        description="Levels, skills and sub-skills. Only leaves are assessed in lessons."
         actions={
           <>
             <Switch
-              label="Mostrar inactivas"
+              label="Show inactive"
               checked={includeInactive}
               onChange={(event) => setIncludeInactive(event.currentTarget.checked)}
             />
@@ -215,15 +215,15 @@ export function SkillsPage() {
               leftSection={<IconPlus size={18} />}
               onClick={() => setModal({ mode: 'create', parent: null })}
             >
-              Nuevo nivel
+              New level
             </Button>
           </>
         }
       />
       {!isPending && tree.length === 0 ? (
         <EmptyState
-          title="El árbol está vacío"
-          description="Corré el seed del backend o creá el primer nivel."
+          title="The tree is empty"
+          description="Run the backend migrations or create the first level."
         />
       ) : (
         <Stack>

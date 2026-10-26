@@ -6,11 +6,14 @@ export const skillSchema = z.object({
     .string()
     .trim()
     .toUpperCase()
-    .regex(/^[A-Z0-9]+(-[A-Z0-9]+)*$/, 'Usá mayúsculas, números y guiones (ej. L1-WIND)')
+    .regex(
+      /^[A-Z0-9]+(-[A-Z0-9]+)*$/,
+      'Use uppercase letters, numbers and hyphens (e.g. L1-WIND)',
+    )
     .max(100),
-  name: z.string().trim().min(1, 'Ingresá el nombre').max(200),
+  name: z.string().trim().min(1, 'Enter the name').max(200),
   description: z.string().trim(),
-  sortOrder: z.number({ message: 'Ingresá un número' }).int(),
+  sortOrder: z.number({ message: 'Enter a number' }).int(),
   active: z.boolean(),
 });
 

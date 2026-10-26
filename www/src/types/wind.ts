@@ -1,4 +1,4 @@
-/** 16-point compass rose with Spanish initials, as accepted by the API. */
+/** 16-point compass rose with English initials, as accepted by the API. */
 export const WIND_DIRECTIONS = [
   'N',
   'NNE',
@@ -9,13 +9,13 @@ export const WIND_DIRECTIONS = [
   'SE',
   'SSE',
   'S',
-  'SSO',
-  'SO',
-  'OSO',
-  'O',
-  'ONO',
-  'NO',
-  'NNO',
+  'SSW',
+  'SW',
+  'WSW',
+  'W',
+  'WNW',
+  'NW',
+  'NNW',
 ] as const;
 
 export type WindDirection = (typeof WIND_DIRECTIONS)[number];

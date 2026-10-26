@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { LessonCreatePage } from '@/pages/lessons/LessonCreatePage';
 import { newLessonSearchSchema } from '@/schemas/lesson-search-schema';
 
-export const Route = createFileRoute('/_authenticated/clases/nueva')({
+export const Route = createFileRoute('/_authenticated/lessons/new')({
   validateSearch: newLessonSearchSchema,
   component: LessonCreateRoute,
 });

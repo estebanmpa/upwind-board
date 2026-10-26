@@ -12,8 +12,8 @@ export function StudentCreatePage() {
   function save(input: StudentInput) {
     createStudent.mutate(input, {
       onSuccess: (student) => {
-        notifySuccess('Alumno creado');
-        navigate({ to: '/alumnos/$studentId', params: { studentId: student.id } });
+        notifySuccess('Student created');
+        navigate({ to: '/students/$studentId', params: { studentId: student.id } });
       },
       onError: notifyError,
     });
@@ -22,11 +22,11 @@ export function StudentCreatePage() {
   return (
     <>
       <PageHeader
-        title="Nuevo alumno"
-        description="Cargá su ficha y contacto de emergencia"
+        title="New student"
+        description="Enter their details and emergency contact"
       />
       <StudentForm
-        submitLabel="Crear alumno"
+        submitLabel="Create student"
         isSubmitting={createStudent.isPending}
         onSubmit={save}
       />

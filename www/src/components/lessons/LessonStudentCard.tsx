@@ -53,21 +53,21 @@ export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardPr
             <Text fw={700}>{fullName(person)}</Text>
             <Text fz="xs" c="dimmed">
               {progress
-                ? `${progress.totalLessons} clases · ${progress.summary.mastered}/${progress.summary.totalSkills} dominadas`
-                : 'Cargando progreso…'}
+                ? `${progress.totalLessons} lessons · ${progress.summary.mastered}/${progress.summary.totalSkills} mastered`
+                : 'Loading progress…'}
             </Text>
           </div>
         </Group>
         <Group gap="xs" wrap="nowrap">
           <Badge variant="light" visibleFrom="xs">
-            {recordsCount} registradas
+            {recordsCount} recorded
           </Badge>
-          <Tooltip label="Quitar de la clase">
+          <Tooltip label="Remove from lesson">
             <ActionIcon
               variant="subtle"
               color="red"
               onClick={onRemove}
-              aria-label="Quitar alumno"
+              aria-label="Remove student"
             >
               <IconX size={18} />
             </ActionIcon>
@@ -96,7 +96,7 @@ export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardPr
         </Grid.Col>
         <Grid.Col span={{ base: 12, sm: 8 }}>
           <TextInput
-            label="Tabla"
+            label="Board"
             placeholder="Twin tip 138"
             {...register(`students.${index}.board`)}
             error={fieldErrors?.board?.message}
@@ -104,7 +104,7 @@ export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardPr
         </Grid.Col>
         <Grid.Col span={12}>
           <Textarea
-            label="Notas del alumno en esta clase"
+            label="Student notes for this lesson"
             autosize
             minRows={1}
             {...register(`students.${index}.notes`)}
@@ -113,7 +113,7 @@ export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardPr
       </Grid>
 
       <Text fw={600} mb="xs">
-        Habilidades trabajadas
+        Skills worked on
       </Text>
       <Controller
         control={control}

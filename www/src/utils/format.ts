@@ -1,12 +1,12 @@
 import type { PersonSummary } from '@/types/api';
 
-const dateFormatter = new Intl.DateTimeFormat('es-AR', { dateStyle: 'medium' });
-const dateTimeFormatter = new Intl.DateTimeFormat('es-AR', {
+const dateFormatter = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium' });
+const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
   dateStyle: 'medium',
   timeStyle: 'short',
 });
-const timeFormatter = new Intl.DateTimeFormat('es-AR', { timeStyle: 'short' });
-const numberFormatter = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 });
+const timeFormatter = new Intl.DateTimeFormat('en-GB', { timeStyle: 'short' });
+const numberFormatter = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 1 });
 
 export function formatDate(isoDate: string): string {
   return dateFormatter.format(new Date(isoDate));
@@ -51,7 +51,7 @@ export function calculateAge(birthDate: string, today = new Date()): number {
   return age;
 }
 
-/** "NO · 14–18 kn", "18 kn", "" when nothing was logged. */
+/** "NW · 14–18 kn", "18 kn", "" when nothing was logged. */
 export function formatWind(lesson: {
   windDirection: string | null;
   windMinKnots: number | null;

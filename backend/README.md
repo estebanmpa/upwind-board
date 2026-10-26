@@ -16,8 +16,7 @@ The whole stack (API, web app and PostgreSQL) runs with Docker from the reposito
 
 ```bash
 cp backend/.env.example backend/.env
-docker compose up --build -d                        # applies migrations on start
-docker compose exec upwind-board-server yarn seed   # IKO skill tree + a sample instructor
+docker compose up --build -d   # applies migrations (schema + IKO skill tree + a sample instructor) on start
 ```
 
 The API listens on <http://localhost:5001> and the OpenAPI docs are served at **<http://localhost:5001/docs>** (JSON at `/docs-json`).
@@ -45,23 +44,13 @@ Run the scripts below inside the container (`docker compose exec upwind-board-se
 | `yarn migration:show` | Lists migrations and their status |
 | `yarn migration:check` | Fails if the entities differ from the schema the migrations produce |
 | `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Name>` | Generates a new migration (after `yarn build`) |
-| `yarn seed` | Idempotent seed (safe to run as many times as needed) |
 | `yarn lint` / `yarn format` | oxlint / prettier |
 
-The migration and seed commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
+The migration commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
 
-## Seed
+## Initial data
 
-The data lives apart from the logic, in easy-to-edit JSON files:
-
-- `src/infrastructure/seed/data/iko-skills.json`: the IKO tree (L1 Discovery, L2 Intermediate, L3 Independent and their skills). Each node has `code`, `name`, and optional `description` and `children`; `sortOrder` is optional (defaults to the node's position ×10).
-- `src/infrastructure/seed/data/instructors.json`: sample instructors.
-
-Seed rules:
-
-- Skills are upserted by `code`: name, description, parent and order follow the file. `active` is only set on insert, so a skill deactivated through the API stays deactivated.
-- Instructors are inserted by email and left untouched if they already exist.
-- Everything runs in one transaction. If the file adds children to a skill that already has lesson records, the seed fails (an evaluated skill must remain a leaf).
+`1793016000000-InitialSchema.ts` creates the schema and `1793016000001-SeedInitialData.ts` inserts the initial data with plain SQL `INSERT` statements: the IKO skill tree (levels → skills → sub-skills, each child resolving its `parent_id` by `code`) and a sample instructor. Later data changes must go in a new migration.
 
 ## Data model
 
@@ -109,7 +98,7 @@ Lists are paginated (`page` starts at 1, `limit` defaults to 20 with a maximum o
 }
 ```
 
-`startsAt` must include a timezone offset, and `windDirection` uses the 16-point compass with Spanish initials (`N`, `NNE` … `O` for west … `NO`, `NNO`).
+`startsAt` must include a timezone offset, and `windDirection` uses the 16-point compass with English initials (`N`, `NNE` … `W` … `NW`, `NNW`).
 
 In `PATCH /lessons/:id` every field is optional. When `students` is sent, it is the full list of participants:
 
@@ -144,7 +133,6 @@ src/
     persistence/type-orm/  ORM entities, mappers, repositories, migrations, CLI data source
     rest/          controllers, error filter and global setup (pipes, Swagger)
     modules/       Nest modules wiring ports to adapters
-    seed/          JSON data and seed logic
 ```
 
 ## Authentication (pending)

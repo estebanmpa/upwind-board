@@ -45,30 +45,30 @@ export function DashboardPage() {
   return (
     <>
       <PageHeader
-        title="Resumen"
-        description={`Actividad de la escuela · ${dayjs().format('MMMM YYYY')}`}
+        title="Dashboard"
+        description={`School activity · ${dayjs().format('MMMM YYYY')}`}
       />
       <SimpleGrid cols={{ base: 1, xs: 2, lg: 4 }} mb="xl" className="fade-in-up">
         <StatCard
-          label="Clases del mes"
+          label="Lessons this month"
           value={month.lessons ?? '—'}
           icon={IconCalendarEvent}
           color="brand"
         />
         <StatCard
-          label="Horas del mes"
+          label="Hours this month"
           value={month.hours === undefined ? '—' : formatHours(month.hours)}
           icon={IconClockHour4}
           color="teal"
         />
         <StatCard
-          label="Alumnos"
+          label="Students"
           value={students?.total ?? '—'}
           icon={IconUsers}
           color="cyan"
         />
         <StatCard
-          label="Instructores activos"
+          label="Active instructors"
           value={instructors?.total ?? '—'}
           icon={IconSchool}
           color="indigo"
@@ -79,15 +79,15 @@ export function DashboardPage() {
         <Grid.Col span={{ base: 12, lg: 8 }}>
           <Card withBorder padding="lg" h="100%">
             <Group justify="space-between" mb="md">
-              <Title order={4}>Últimas clases</Title>
-              <Button variant="subtle" size="xs" component={Link} to="/clases">
-                Ver todas
+              <Title order={4}>Latest lessons</Title>
+              <Button variant="subtle" size="xs" component={Link} to="/lessons">
+                View all
               </Button>
             </Group>
             {!isPending && recent?.items.length === 0 ? (
               <EmptyState
-                title="Sin clases todavía"
-                description="Registrá la primera clase para empezar a seguir la progresión."
+                title="No lessons yet"
+                description="Log the first lesson to start tracking progression."
               />
             ) : (
               <LessonsTable lessons={recent?.items ?? []} />
@@ -99,30 +99,30 @@ export function DashboardPage() {
             <Stack justify="space-between" h="100%">
               <div>
                 <Title order={3} c="white">
-                  ¿Terminaste una clase?
+                  Just finished a lesson?
                 </Title>
                 <Text c="white" opacity={0.85} mt="xs">
-                  Registrala con los alumnos y lo que trabajó cada uno. La progresión IKO
-                  se actualiza sola.
+                  Log it with its students and what each one worked on. The IKO
+                  progression updates itself.
                 </Text>
               </div>
               <Stack gap="xs">
                 <Button
                   component={Link}
-                  to="/clases/nueva"
+                  to="/lessons/new"
                   variant="white"
                   leftSection={<IconPlus size={18} />}
                 >
-                  Registrar clase
+                  Log lesson
                 </Button>
                 <Button
                   component={Link}
-                  to="/alumnos/nuevo"
+                  to="/students/new"
                   variant="outline"
                   color="white"
                   leftSection={<IconUserPlus size={18} />}
                 >
-                  Nuevo alumno
+                  New student
                 </Button>
               </Stack>
             </Stack>

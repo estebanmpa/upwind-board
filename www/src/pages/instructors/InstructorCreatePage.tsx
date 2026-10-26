@@ -12,8 +12,8 @@ export function InstructorCreatePage() {
   function save(input: InstructorInput) {
     createInstructor.mutate(input, {
       onSuccess: () => {
-        notifySuccess('Instructor creado');
-        navigate({ to: '/instructores' });
+        notifySuccess('Instructor created');
+        navigate({ to: '/instructors' });
       },
       onError: notifyError,
     });
@@ -21,9 +21,9 @@ export function InstructorCreatePage() {
 
   return (
     <>
-      <PageHeader title="Nuevo instructor" />
+      <PageHeader title="New instructor" />
       <InstructorForm
-        submitLabel="Crear instructor"
+        submitLabel="Create instructor"
         isSubmitting={createInstructor.isPending}
         onSubmit={save}
       />

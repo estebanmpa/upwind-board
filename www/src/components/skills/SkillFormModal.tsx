@@ -79,7 +79,7 @@ export function SkillFormModal({
     <Modal
       opened={state !== null}
       onClose={onClose}
-      title={state?.mode === 'edit' ? 'Editar habilidad' : 'Nueva habilidad'}
+      title={state?.mode === 'edit' ? 'Edit skill' : 'New skill'}
       size="lg"
       radius="lg"
     >
@@ -90,9 +90,9 @@ export function SkillFormModal({
             name="parentId"
             render={({ field }) => (
               <Select
-                label="Depende de"
-                description="Vacío para crear un nivel (raíz)"
-                placeholder="Nivel raíz"
+                label="Parent"
+                description="Leave empty to create a level (root)"
+                placeholder="Root level"
                 data={options}
                 searchable
                 clearable
@@ -101,17 +101,13 @@ export function SkillFormModal({
             )}
           />
           <Group grow align="start">
-            <TextInput
-              label="Código"
-              {...register('code')}
-              error={errors.code?.message}
-            />
+            <TextInput label="Code" {...register('code')} error={errors.code?.message} />
             <Controller
               control={control}
               name="sortOrder"
               render={({ field }) => (
                 <NumberInput
-                  label="Orden"
+                  label="Sort order"
                   allowDecimal={false}
                   value={field.value}
                   onChange={(value) =>
@@ -122,9 +118,9 @@ export function SkillFormModal({
               )}
             />
           </Group>
-          <TextInput label="Nombre" {...register('name')} error={errors.name?.message} />
+          <TextInput label="Name" {...register('name')} error={errors.name?.message} />
           <Textarea
-            label="Descripción"
+            label="Description"
             autosize
             minRows={2}
             {...register('description')}
@@ -134,8 +130,8 @@ export function SkillFormModal({
             name="active"
             render={({ field: { value, ...field } }) => (
               <Switch
-                label="Activa"
-                description="Las inactivas no se pueden registrar en clases nuevas"
+                label="Active"
+                description="Inactive skills cannot be recorded in new lessons"
                 checked={value}
                 {...field}
               />
@@ -143,10 +139,10 @@ export function SkillFormModal({
           />
           <Group justify="end">
             <Button variant="default" onClick={onClose}>
-              Cancelar
+              Cancel
             </Button>
             <Button type="submit" variant="gradient" loading={isSubmitting}>
-              Guardar
+              Save
             </Button>
           </Group>
         </Stack>

@@ -29,16 +29,16 @@ Production builds call the API directly at `VITE_API_URL` (read from `.env` at b
 | Route | Content |
 | --- | --- |
 | `/` | Dashboard: lessons and hours this month, students, active instructors and latest lessons |
-| `/clases` | Paginated lesson list, filterable by instructor |
-| `/clases/nueva` | Log a lesson (`?studentId=` adds that student upfront) |
-| `/clases/:id` | Edit or delete a lesson |
-| `/alumnos` | Student list with search by name |
-| `/alumnos/:id` | Profile: IKO progression per level, lesson history and student details |
-| `/alumnos/nuevo`, `/alumnos/:id/editar` | Create and edit students |
-| `/instructores`, `/instructores/nuevo`, `/instructores/:id` | Instructor management |
-| `/habilidades` | IKO tree: create, edit, move, deactivate and delete skills |
+| `/lessons` | Paginated lesson list, filterable by instructor |
+| `/lessons/new` | Log a lesson (`?studentId=` adds that student upfront) |
+| `/lessons/:id` | Edit or delete a lesson |
+| `/students` | Student list with search by name |
+| `/students/:id` | Profile: IKO progression per level, lesson history and student details |
+| `/students/new`, `/students/:id/edit` | Create and edit students |
+| `/instructors`, `/instructors/new`, `/instructors/:id` | Instructor management |
+| `/skills` | IKO tree: create, edit, move, deactivate and delete skills |
 
-Routes and UI copy are in Spanish, the language of the app's users.
+Routes and UI copy are in English.
 
 When logging a lesson, each student gets a card with kite, board, notes and a per-level editor where each skill is marked as Introduced, Practiced or Mastered. Next to every skill, the editor shows the last status recorded for that student. Inactive skills only show up if the lesson already recorded them.
 
