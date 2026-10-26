@@ -96,7 +96,13 @@ describe('Lessons (e2e)', () => {
       });
       expect(res.body.students).toHaveLength(2);
       const juanRow = participation(res.body, juan.id);
+      expect(res.body.instructor).toEqual({
+        id: instructor.id,
+        firstName: 'Ana',
+        lastName: 'Ríos',
+      });
       expect(juanRow).toMatchObject({
+        student: { id: juan.id, firstName: 'Juan', lastName: 'Pérez' },
         kiteSizeM2: 9,
         board: 'TT 138',
         notes: null,
