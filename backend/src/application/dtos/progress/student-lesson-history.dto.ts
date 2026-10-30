@@ -27,7 +27,9 @@ export class StudentLessonHistoryItemDto {
   windMaxKnots: number | null;
   /** Notes about the lesson as a whole. */
   lessonNotes: string | null;
-  instructor: HistoryInstructorDto;
+  /** Null while a scheduled lesson has no instructor. */
+  @ApiProperty({ type: () => HistoryInstructorDto, nullable: true })
+  instructor: HistoryInstructorDto | null;
   kiteSizeM2: number | null;
   board: string | null;
   /** Notes about this student in the lesson. */

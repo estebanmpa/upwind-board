@@ -24,17 +24,16 @@ export class CreateStudentDto {
   @MaxLength(100)
   lastName: string;
 
-  @IsOptional()
   @TrimLowerCase()
   @IsEmail()
   @MaxLength(255)
-  email?: string | null;
+  email: string;
 
+  @IsOptional()
   @Trim()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(50)
-  phone: string;
+  phone?: string | null;
 
   /** ISO date. @example 1995-04-21 */
   @IsOptional()
@@ -48,17 +47,17 @@ export class CreateStudentDto {
   @Max(999)
   weightKg?: number | null;
 
+  @IsOptional()
   @Trim()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(200)
-  emergencyContactName: string;
+  emergencyContactName?: string | null;
 
+  @IsOptional()
   @Trim()
   @IsString()
-  @IsNotEmpty()
   @MaxLength(50)
-  emergencyContactPhone: string;
+  emergencyContactPhone?: string | null;
 
   @IsOptional()
   @Trim()

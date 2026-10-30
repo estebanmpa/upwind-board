@@ -29,6 +29,7 @@ export function emptyLessonForm(
   now = new Date(),
 ): Partial<LessonFormValues> {
   return {
+    instructorId: null,
     startsAt: nextFullHour(now),
     durationMinutes: DEFAULT_DURATION_MINUTES,
     spot: '',

@@ -16,6 +16,11 @@ export function formatDateTime(isoDate: string): string {
   return dateTimeFormatter.format(new Date(isoDate));
 }
 
+/** True for lessons that have not started yet. */
+export function isUpcoming(isoDate: string, now = new Date()): boolean {
+  return new Date(isoDate) > now;
+}
+
 export function formatTime(isoDate: string): string {
   return timeFormatter.format(new Date(isoDate));
 }

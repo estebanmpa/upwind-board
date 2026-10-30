@@ -38,7 +38,7 @@ export function LessonEditPage({ lessonId }: { lessonId: string }) {
       />
       <LessonForm
         initialValues={lessonToFormValues(lesson)}
-        currentInstructor={lesson.instructor}
+        currentInstructor={lesson.instructor ?? undefined}
         submitLabel="Save changes"
         isSubmitting={updateLesson.isPending}
         onSubmit={save}

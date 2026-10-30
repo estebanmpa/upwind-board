@@ -21,12 +21,39 @@ export class LessonDraftValidator {
     private readonly skills: SkillRepository,
   ) {}
 
-  /** @param previous current state of the lesson when updating. */
-  async validate(draft: LessonDraft, previous?: Lesson): Promise<void> {
+  /**
+   * @param previous current state of the lesson when updating.
+   * @param now reference instant to tell scheduled lessons from past ones.
+   */
+  async validate(
+    draft: LessonDraft,
+    previous?: Lesson,
+    now = new Date(),
+  ): Promise<void> {
     this.validateWindRange(draft);
+    this.validateRecordsCanBeLogged(draft, now);
     await this.validateInstructor(draft, previous);
     await this.validateStudents(draft);
     await this.validateSkillRecords(draft, previous);
+  }
+
+  /**
+   * Progression is derived from skill records, so they are only accepted for
+   * lessons that already started and have an instructor who taught them.
+   */
+  private validateRecordsCanBeLogged(draft: LessonDraft, now: Date) {
+    const hasRecords = draft.students.some((s) => s.skillRecords.length > 0);
+    if (!hasRecords) return;
+    if (draft.startsAt > now) {
+      throw new BusinessRuleViolationError(
+        'Skills cannot be recorded for a lesson that has not started yet',
+      );
+    }
+    if (draft.instructorId === null) {
+      throw new BusinessRuleViolationError(
+        'Assign an instructor before recording skills',
+      );
+    }
   }
 
   private validateWindRange({ windMinKnots, windMaxKnots }: LessonDraft) {
@@ -42,6 +69,7 @@ export class LessonDraftValidator {
   }
 
   private async validateInstructor(draft: LessonDraft, previous?: Lesson) {
+    if (draft.instructorId === null) return;
     const instructor = await this.instructors.findById(draft.instructorId);
     if (!instructor) throw new NotFoundError('Instructor', draft.instructorId);
     // Lessons already assigned to an instructor stay editable after they leave.

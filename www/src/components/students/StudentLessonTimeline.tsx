@@ -15,7 +15,13 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { SkillStatusBadge } from '@/components/skills/SkillStatusBadge';
 import { studentLessonsQuery } from '@/queries/students';
 import type { StudentLessonHistoryItem } from '@/types/progress';
-import { formatDateTime, formatDuration, formatWind, fullName } from '@/utils/format';
+import {
+  formatDateTime,
+  formatDuration,
+  formatWind,
+  fullName,
+  isUpcoming,
+} from '@/utils/format';
 
 function LessonDetails({ item }: { item: StudentLessonHistoryItem }) {
   const equipment = [item.kiteSizeM2 && `Kite ${item.kiteSizeM2} m²`, item.board]
@@ -24,7 +30,8 @@ function LessonDetails({ item }: { item: StudentLessonHistoryItem }) {
   return (
     <Stack gap={6} mt={4}>
       <Text fz="sm" c="dimmed">
-        {fullName(item.instructor)} · {formatDuration(item.durationMinutes)}
+        {item.instructor ? fullName(item.instructor) : 'No instructor yet'} ·{' '}
+        {formatDuration(item.durationMinutes)}
         {formatWind(item) && ` · ${formatWind(item)}`}
         {equipment && ` · ${equipment}`}
       </Text>
@@ -89,6 +96,11 @@ export function StudentLessonTimeline({ studentId }: { studentId: string }) {
                 <Badge variant="light" color="cyan">
                   {item.spot}
                 </Badge>
+                {isUpcoming(item.startsAt) && (
+                  <Badge variant="light" color="violet">
+                    Scheduled
+                  </Badge>
+                )}
               </Group>
             }
           >

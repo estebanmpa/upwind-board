@@ -21,7 +21,8 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
   function save(payload: LessonPayload) {
     createLesson.mutate(payload, {
       onSuccess: () => {
-        notifySuccess('Lesson logged');
+        const isScheduled = new Date(payload.startsAt) > new Date();
+        notifySuccess(isScheduled ? 'Lesson scheduled' : 'Lesson logged');
         navigate(
           studentId
             ? { to: '/students/$studentId', params: { studentId } }
@@ -35,8 +36,8 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
   return (
     <>
       <PageHeader
-        title="Log lesson"
-        description="Lesson details and what each student worked on"
+        title="New lesson"
+        description="Schedule an upcoming lesson or log one that already happened"
       />
       {studentId && isPending ? (
         <Center py="xl">

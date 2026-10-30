@@ -12,11 +12,11 @@ export class StudentOrmEntity extends BaseOrmEntity {
   @Column({ name: 'last_name', type: 'varchar', length: 100 })
   lastName: string;
 
-  @Column({ name: 'email', type: 'varchar', length: 255, nullable: true })
-  email: string | null;
+  @Column({ name: 'email', type: 'varchar', length: 255 })
+  email: string;
 
-  @Column({ name: 'phone', type: 'varchar', length: 50 })
-  phone: string;
+  @Column({ name: 'phone', type: 'varchar', length: 50, nullable: true })
+  phone: string | null;
 
   @Column({ name: 'birth_date', type: 'date', nullable: true })
   birthDate: string | null;
@@ -31,11 +31,21 @@ export class StudentOrmEntity extends BaseOrmEntity {
   })
   weightKg: number | null;
 
-  @Column({ name: 'emergency_contact_name', type: 'varchar', length: 200 })
-  emergencyContactName: string;
+  @Column({
+    name: 'emergency_contact_name',
+    type: 'varchar',
+    length: 200,
+    nullable: true,
+  })
+  emergencyContactName: string | null;
 
-  @Column({ name: 'emergency_contact_phone', type: 'varchar', length: 50 })
-  emergencyContactPhone: string;
+  @Column({
+    name: 'emergency_contact_phone',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  emergencyContactPhone: string | null;
 
   @Column({ name: 'notes', type: 'text', nullable: true })
   notes: string | null;

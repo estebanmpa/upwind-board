@@ -24,12 +24,12 @@ const toPersonSummary = (person: {
 });
 
 export class LessonMapper {
-  /** Expects `instructor`, `students.student` and `students.skillRecords` loaded. */
+  /** Expects `instructor` (when assigned), `students.student` and `students.skillRecords` loaded. */
   static toDomain(entity: LessonOrmEntity): Lesson {
     return new Lesson({
       id: entity.id,
       instructorId: entity.instructorId,
-      instructor: toPersonSummary(entity.instructor!),
+      instructor: entity.instructor ? toPersonSummary(entity.instructor) : null,
       startsAt: entity.startsAt,
       durationMinutes: entity.durationMinutes,
       spot: entity.spot,

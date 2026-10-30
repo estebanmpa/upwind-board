@@ -29,7 +29,7 @@ const newStudent = (input: LessonStudentInputDto): DraftStudent => ({
 
 export function createLessonDraft(dto: CreateLessonDto): LessonDraft {
   return {
-    instructorId: dto.instructorId,
+    instructorId: dto.instructorId ?? null,
     startsAt: new Date(dto.startsAt),
     durationMinutes: dto.durationMinutes,
     spot: dto.spot,

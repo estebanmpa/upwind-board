@@ -21,8 +21,10 @@ import { Trim, TrimUpperCase } from '../common/transformers.js';
 import { LessonStudentInputDto } from './lesson-input.dto.js';
 
 export class CreateLessonDto {
+  /** Optional while scheduling: it can be assigned later. */
+  @IsOptional()
   @IsUUID()
-  instructorId: string;
+  instructorId?: string | null;
 
   /** ISO 8601 with timezone offset. @example 2026-11-02T15:00:00-03:00 */
   @IsISO8601({ strict: true })

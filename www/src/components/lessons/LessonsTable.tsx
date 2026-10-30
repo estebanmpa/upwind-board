@@ -1,4 +1,4 @@
-import { Avatar, Badge, Table, Text, Tooltip } from '@mantine/core';
+import { Avatar, Badge, Group, Table, Text, Tooltip } from '@mantine/core';
 import { useNavigate } from '@tanstack/react-router';
 import { PersonAvatar } from '@/components/common/PersonAvatar';
 import type { Lesson } from '@/types/lesson';
@@ -8,11 +8,12 @@ import {
   formatTime,
   formatWind,
   fullName,
+  isUpcoming,
 } from '@/utils/format';
 
 const MAX_AVATARS = 4;
 
-function StudentsCell({ lesson }: { lesson: Lesson }) {
+export function LessonStudentAvatars({ lesson }: { lesson: Lesson }) {
   const shown = lesson.students.slice(0, MAX_AVATARS);
   const hidden = lesson.students.length - shown.length;
   return (
@@ -58,17 +59,32 @@ export function LessonsTable({ lessons }: { lessons: Lesson[] }) {
               }
             >
               <Table.Td>
-                <Text fz="sm" fw={600}>
-                  {formatDate(lesson.startsAt)}
-                </Text>
+                <Group gap="xs" wrap="nowrap">
+                  <Text fz="sm" fw={600}>
+                    {formatDate(lesson.startsAt)}
+                  </Text>
+                  {isUpcoming(lesson.startsAt) && (
+                    <Badge size="xs" variant="light" color="violet">
+                      Scheduled
+                    </Badge>
+                  )}
+                </Group>
                 <Text fz="xs" c="dimmed">
                   {formatTime(lesson.startsAt)}
                 </Text>
               </Table.Td>
               <Table.Td>{lesson.spot}</Table.Td>
-              <Table.Td>{fullName(lesson.instructor)}</Table.Td>
               <Table.Td>
-                <StudentsCell lesson={lesson} />
+                {lesson.instructor ? (
+                  fullName(lesson.instructor)
+                ) : (
+                  <Badge variant="outline" color="orange">
+                    Unassigned
+                  </Badge>
+                )}
+              </Table.Td>
+              <Table.Td>
+                <LessonStudentAvatars lesson={lesson} />
               </Table.Td>
               <Table.Td>
                 {formatWind(lesson) ? (

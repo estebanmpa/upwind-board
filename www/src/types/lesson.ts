@@ -21,8 +21,9 @@ export interface LessonStudent {
 
 export interface Lesson {
   id: string;
-  instructorId: string;
-  instructor: PersonSummary;
+  /** Null while a scheduled lesson waits for an instructor. */
+  instructorId: string | null;
+  instructor: PersonSummary | null;
   startsAt: string;
   durationMinutes: number;
   spot: string;
@@ -37,7 +38,7 @@ export interface Lesson {
 
 /** Body of POST /lessons; PATCH /lessons/:id accepts the same full state. */
 export interface LessonPayload {
-  instructorId: string;
+  instructorId: string | null;
   startsAt: string;
   durationMinutes: number;
   spot: string;
@@ -56,7 +57,11 @@ export interface LessonPayload {
 
 export interface LessonFilters extends PageParams {
   instructorId?: string;
+  /** Only lessons without an instructor. */
+  unassigned?: boolean;
   studentId?: string;
   from?: string;
   to?: string;
+  /** By start date; the API defaults to 'desc'. */
+  order?: 'asc' | 'desc';
 }
