@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button, Card, Grid, Group, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 import {
   IconCalendarEvent,
@@ -23,9 +24,10 @@ const RECENT_LESSONS = 6;
 // The API caps pages at 100: enough to add up a month of lessons.
 const MONTH_LESSONS_LIMIT = 100;
 
-function useMonthStats() {
-  const from = dayjs().startOf('month').toISOString();
-  const { data } = useQuery(lessonsQuery({ from, limit: MONTH_LESSONS_LIMIT }));
+/** Lessons given so far this month; scheduled ones are not counted yet. */
+function useMonthStats(now: string) {
+  const from = dayjs(now).startOf('month').toISOString();
+  const { data } = useQuery(lessonsQuery({ from, to: now, limit: MONTH_LESSONS_LIMIT }));
   const minutes = data?.items.reduce(
     (total, lesson) => total + lesson.durationMinutes,
     0,
@@ -37,10 +39,14 @@ function useMonthStats() {
 }
 
 export function DashboardPage() {
+  // Fixed while the page is open so the query keys stay stable.
+  const [now] = useState(() => new Date().toISOString());
   const { data: students } = useQuery(studentsQuery({ limit: 1 }));
   const { data: instructors } = useQuery(instructorsQuery({ active: true, limit: 1 }));
-  const { data: recent, isPending } = useQuery(lessonsQuery({ limit: RECENT_LESSONS }));
-  const month = useMonthStats();
+  const { data: recent, isPending } = useQuery(
+    lessonsQuery({ to: now, limit: RECENT_LESSONS }),
+  );
+  const month = useMonthStats(now);
 
   return (
     <>
@@ -113,7 +119,7 @@ export function DashboardPage() {
                   variant="white"
                   leftSection={<IconPlus size={18} />}
                 >
-                  Log lesson
+                  New lesson
                 </Button>
                 <Button
                   component={Link}

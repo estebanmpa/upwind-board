@@ -34,17 +34,19 @@ export class LessonsController {
     private readonly listLessons: ListLessonsUseCase,
   ) {}
 
-  /** Most recent first. */
+  /** Most recent first by default. */
   @Get()
   list(@Query() query: ListLessonsQueryDto): Promise<LessonPageDto> {
     return this.listLessons.execute(
       {
         instructorId: query.instructorId,
+        unassigned: query.unassigned,
         studentId: query.studentId,
         from: query.from ? new Date(query.from) : undefined,
         to: query.to ? new Date(query.to) : undefined,
       },
       query.toPageRequest(),
+      query.order,
     );
   }
 

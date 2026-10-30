@@ -23,7 +23,7 @@ export function StudentCreatePage() {
     <>
       <PageHeader
         title="New student"
-        description="Enter their details and emergency contact"
+        description="Name and email are enough; the rest can be completed later"
       />
       <StudentForm
         submitLabel="Create student"

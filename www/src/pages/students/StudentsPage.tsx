@@ -38,12 +38,12 @@ function StudentRow({ student, onDelete }: { student: Student; onDelete: () => v
               {fullName(student)}
             </Text>
             <Text fz="xs" c="dimmed">
-              {student.email ?? 'No email'}
+              {student.email}
             </Text>
           </div>
         </Group>
       </Table.Td>
-      <Table.Td>{student.phone}</Table.Td>
+      <Table.Td>{student.phone ?? '—'}</Table.Td>
       <Table.Td>
         {student.birthDate ? `${calculateAge(student.birthDate)} years` : '—'}
       </Table.Td>

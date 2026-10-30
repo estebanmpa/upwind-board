@@ -44,7 +44,7 @@ export interface StudentLessonHistoryItem {
   windMinKnots: number | null;
   windMaxKnots: number | null;
   lessonNotes: string | null;
-  instructor: PersonSummary;
+  instructor: PersonSummary | null;
   kiteSizeM2: number | null;
   board: string | null;
   studentNotes: string | null;

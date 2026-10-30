@@ -11,6 +11,7 @@ import {
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconCalendarEvent,
+  IconCalendarWeek,
   IconLayoutDashboard,
   IconListTree,
   IconPlus,
@@ -23,7 +24,7 @@ import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle';
 import { Logo } from '@/components/common/Logo';
 
 interface NavItem {
-  to: '/' | '/students' | '/lessons' | '/instructors' | '/skills';
+  to: '/' | '/schedule' | '/students' | '/lessons' | '/instructors' | '/skills';
   label: string;
   icon: Icon;
   exact?: boolean;
@@ -31,6 +32,7 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Dashboard', icon: IconLayoutDashboard, exact: true },
+  { to: '/schedule', label: 'Schedule', icon: IconCalendarWeek },
   { to: '/lessons', label: 'Lessons', icon: IconCalendarEvent },
   { to: '/students', label: 'Students', icon: IconUsers },
   { to: '/instructors', label: 'Instructors', icon: IconSchool },
@@ -66,7 +68,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               leftSection={<IconPlus size={16} />}
               visibleFrom="xs"
             >
-              Log lesson
+              New lesson
             </Button>
             <ColorSchemeToggle />
           </Group>

@@ -26,9 +26,8 @@ export const lessonStudentSchema = z.object({
 
 export const lessonSchema = z
   .object({
-    instructorId: z
-      .string({ message: 'Choose an instructor' })
-      .min(1, 'Choose an instructor'),
+    /** Optional while scheduling: it can be assigned later. */
+    instructorId: z.string().min(1).nullable(),
     startsAt: z.date({ message: 'Choose date and time' }),
     durationMinutes: z
       .number({ message: 'Enter the duration' })
@@ -46,7 +45,25 @@ export const lessonSchema = z
     ({ windMinKnots, windMaxKnots }) =>
       windMinKnots === null || windMaxKnots === null || windMinKnots <= windMaxKnots,
     { message: 'Must be greater than or equal to the minimum', path: ['windMaxKnots'] },
+  )
+  .refine(
+    (values) =>
+      canRecordSkills(values) ||
+      values.students.every((student) => Object.keys(student.records).length === 0),
+    {
+      message:
+        'Skills can only be recorded once the lesson has started and has an instructor. Remove them or change the lesson.',
+      path: ['students'],
+    },
   );
+
+/** Progression comes from skill records: only lessons that happened, with an instructor. */
+export function canRecordSkills(
+  { startsAt, instructorId }: { startsAt?: Date | null; instructorId?: string | null },
+  now = new Date(),
+): boolean {
+  return Boolean(instructorId) && Boolean(startsAt) && startsAt! <= now;
+}
 
 export type LessonFormValues = z.infer<typeof lessonSchema>;
 export type LessonStudentFormValues = z.infer<typeof lessonStudentSchema>;

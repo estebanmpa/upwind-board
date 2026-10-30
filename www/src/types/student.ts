@@ -4,13 +4,13 @@ export interface Student {
   id: string;
   firstName: string;
   lastName: string;
-  email: string | null;
-  phone: string;
+  email: string;
+  phone: string | null;
   /** YYYY-MM-DD */
   birthDate: string | null;
   weightKg: number | null;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
   notes: string | null;
   createdAt: string;
   updatedAt: string;

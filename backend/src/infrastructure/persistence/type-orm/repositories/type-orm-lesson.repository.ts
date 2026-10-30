@@ -7,6 +7,7 @@ import {
 } from '../../../../domain/entities/lesson.entity.js';
 import {
   LessonFilter,
+  LessonOrder,
   LessonRepository,
   SkillRecordHistoryEntry,
   StudentLessonStats,
@@ -44,6 +45,7 @@ export class TypeOrmLessonRepository extends LessonRepository {
   async findPage(
     filter: LessonFilter,
     { page, limit }: PageRequest,
+    order: LessonOrder = 'desc',
   ): Promise<Page<Lesson>> {
     // Page over lesson ids first so joins cannot distort skip/take.
     const qb = this.dataSource
@@ -54,6 +56,9 @@ export class TypeOrmLessonRepository extends LessonRepository {
       qb.andWhere('lesson.instructor_id = :instructorId', {
         instructorId: filter.instructorId,
       });
+    }
+    if (filter.unassigned) {
+      qb.andWhere('lesson.instructor_id IS NULL');
     }
     if (filter.studentId) {
       qb.andWhere(
@@ -68,7 +73,7 @@ export class TypeOrmLessonRepository extends LessonRepository {
       qb.andWhere('lesson.starts_at < :to', { to: filter.to });
     }
     const [rows, total] = await qb
-      .orderBy('lesson.starts_at', 'DESC')
+      .orderBy('lesson.starts_at', order === 'asc' ? 'ASC' : 'DESC')
       .addOrderBy('lesson.id', 'ASC')
       .skip((page - 1) * limit)
       .take(limit)
@@ -219,7 +224,7 @@ export class TypeOrmLessonRepository extends LessonRepository {
                COALESCE(SUM(l.duration_minutes), 0) AS total_minutes
         FROM lessons l
         JOIN lesson_students ls ON ls.lesson_id = l.id
-        WHERE ls.student_id = $1
+        WHERE ls.student_id = $1 AND l.starts_at <= now()
       `,
         [studentId],
       );

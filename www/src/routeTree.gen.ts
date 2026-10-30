@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedSkillsImport } from './routes/_authenticated/skills'
+import { Route as AuthenticatedScheduleImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedStudentsIndexImport } from './routes/_authenticated/students/index'
 import { Route as AuthenticatedLessonsIndexImport } from './routes/_authenticated/lessons/index'
 import { Route as AuthenticatedInstructorsIndexImport } from './routes/_authenticated/instructors/index'
@@ -41,6 +42,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
 const AuthenticatedSkillsRoute = AuthenticatedSkillsImport.update({
   id: '/skills',
   path: '/skills',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const AuthenticatedScheduleRoute = AuthenticatedScheduleImport.update({
+  id: '/schedule',
+  path: '/schedule',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 
@@ -122,6 +129,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
+    }
+    '/_authenticated/schedule': {
+      id: '/_authenticated/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof AuthenticatedScheduleImport
+      parentRoute: typeof AuthenticatedImport
     }
     '/_authenticated/skills': {
       id: '/_authenticated/skills'
@@ -213,6 +227,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
   AuthenticatedSkillsRoute: typeof AuthenticatedSkillsRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedInstructorsInstructorIdRoute: typeof AuthenticatedInstructorsInstructorIdRoute
@@ -228,6 +243,7 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
   AuthenticatedSkillsRoute: AuthenticatedSkillsRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedInstructorsInstructorIdRoute:
@@ -251,6 +267,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '': typeof AuthenticatedRouteWithChildren
+  '/schedule': typeof AuthenticatedScheduleRoute
   '/skills': typeof AuthenticatedSkillsRoute
   '/': typeof AuthenticatedIndexRoute
   '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
@@ -266,6 +283,7 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/schedule': typeof AuthenticatedScheduleRoute
   '/skills': typeof AuthenticatedSkillsRoute
   '/': typeof AuthenticatedIndexRoute
   '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
@@ -283,6 +301,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/skills': typeof AuthenticatedSkillsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
@@ -301,6 +320,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/schedule'
     | '/skills'
     | '/'
     | '/instructors/$instructorId'
@@ -315,6 +335,7 @@ export interface FileRouteTypes {
     | '/students/$studentId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/schedule'
     | '/skills'
     | '/'
     | '/instructors/$instructorId'
@@ -330,6 +351,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/_authenticated/schedule'
     | '/_authenticated/skills'
     | '/_authenticated/'
     | '/_authenticated/instructors/$instructorId'
@@ -369,6 +391,7 @@ export const routeTree = rootRoute
     "/_authenticated": {
       "filePath": "_authenticated.tsx",
       "children": [
+        "/_authenticated/schedule",
         "/_authenticated/skills",
         "/_authenticated/",
         "/_authenticated/instructors/$instructorId",
@@ -382,6 +405,10 @@ export const routeTree = rootRoute
         "/_authenticated/students/$studentId/edit",
         "/_authenticated/students/$studentId/"
       ]
+    },
+    "/_authenticated/schedule": {
+      "filePath": "_authenticated/schedule.tsx",
+      "parent": "/_authenticated"
     },
     "/_authenticated/skills": {
       "filePath": "_authenticated/skills.tsx",

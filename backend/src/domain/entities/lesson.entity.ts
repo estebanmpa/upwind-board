@@ -24,11 +24,15 @@ export class LessonStudent {
   skillRecords: LessonSkillRecord[];
 }
 
-/** Aggregate root: a lesson owns its students and their skill records. */
+/**
+ * Aggregate root: a lesson owns its students and their skill records.
+ * A lesson starting in the future is a scheduled one; its instructor can be
+ * assigned later.
+ */
 export class Lesson {
   id: string;
-  instructorId: string;
-  instructor: PersonSummary;
+  instructorId: string | null;
+  instructor: PersonSummary | null;
   startsAt: Date;
   durationMinutes: number;
   spot: string;

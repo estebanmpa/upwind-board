@@ -11,12 +11,12 @@ export class CreateStudentUseCase {
     return this.students.create({
       firstName: dto.firstName,
       lastName: dto.lastName,
-      email: dto.email ?? null,
-      phone: dto.phone,
+      email: dto.email,
+      phone: dto.phone || null,
       birthDate: dto.birthDate ?? null,
       weightKg: dto.weightKg ?? null,
-      emergencyContactName: dto.emergencyContactName,
-      emergencyContactPhone: dto.emergencyContactPhone,
+      emergencyContactName: dto.emergencyContactName || null,
+      emergencyContactPhone: dto.emergencyContactPhone || null,
       notes: dto.notes ?? null,
     });
   }

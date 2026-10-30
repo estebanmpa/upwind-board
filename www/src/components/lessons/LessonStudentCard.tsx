@@ -25,10 +25,20 @@ import { SkillRecordsEditor } from './SkillRecordsEditor';
 interface LessonStudentCardProps {
   index: number;
   tree: SkillTreeNode[];
+  /** False for scheduled or unassigned lessons. */
+  canRecord: boolean;
+  /** Shown instead of the skills editor when recording is not possible. */
+  lockedReason: string;
   onRemove: () => void;
 }
 
-export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardProps) {
+export function LessonStudentCard({
+  index,
+  tree,
+  canRecord,
+  lockedReason,
+  onRemove,
+}: LessonStudentCardProps) {
   const {
     control,
     register,
@@ -115,18 +125,24 @@ export function LessonStudentCard({ index, tree, onRemove }: LessonStudentCardPr
       <Text fw={600} mb="xs">
         Skills worked on
       </Text>
-      <Controller
-        control={control}
-        name={`students.${index}.records`}
-        render={({ field }) => (
-          <SkillRecordsEditor
-            tree={tree}
-            value={field.value}
-            onChange={field.onChange}
-            currentStatuses={progress ? statusBySkill(progress.tree) : undefined}
-          />
-        )}
-      />
+      {!canRecord && recordsCount === 0 ? (
+        <Text fz="sm" c="dimmed">
+          {lockedReason}
+        </Text>
+      ) : (
+        <Controller
+          control={control}
+          name={`students.${index}.records`}
+          render={({ field }) => (
+            <SkillRecordsEditor
+              tree={tree}
+              value={field.value}
+              onChange={field.onChange}
+              currentStatuses={progress ? statusBySkill(progress.tree) : undefined}
+            />
+          )}
+        />
+      )}
     </Card>
   );
 }

@@ -1,7 +1,8 @@
-import { useEffect, type ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Alert,
+  Badge,
   Button,
   Divider,
   Grid,
@@ -16,7 +17,7 @@ import {
   Title,
 } from '@mantine/core';
 import { DateTimePicker } from '@mantine/dates';
-import { IconDeviceFloppy, IconUsers } from '@tabler/icons-react';
+import { IconCalendarClock, IconDeviceFloppy, IconUsers } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Controller,
@@ -24,12 +25,15 @@ import {
   useFieldArray,
   useForm,
   useWatch,
-  type UseFormReturn,
 } from 'react-hook-form';
 import { EmptyState } from '@/components/common/EmptyState';
 import { activeInstructorsQuery } from '@/queries/instructors';
 import { skillTreeQuery } from '@/queries/skills';
-import { lessonSchema, type LessonFormValues } from '@/schemas/lesson-schema';
+import {
+  canRecordSkills,
+  lessonSchema,
+  type LessonFormValues,
+} from '@/schemas/lesson-schema';
 import type { PersonSummary } from '@/types/api';
 import type { LessonPayload } from '@/types/lesson';
 import { WIND_DIRECTIONS } from '@/types/wind';
@@ -69,20 +73,6 @@ function useInstructorOptions(currentInstructor?: PersonSummary) {
   return options;
 }
 
-/** With a single instructor available, there is nothing to choose. */
-function useSoleInstructorDefault(
-  form: UseFormReturn<LessonFormValues>,
-  options: { value: string }[],
-) {
-  const { getValues, setValue } = form;
-  const soleInstructorId = options.length === 1 ? options[0].value : undefined;
-  useEffect(() => {
-    if (soleInstructorId && !getValues('instructorId')) {
-      setValue('instructorId', soleInstructorId);
-    }
-  }, [soleInstructorId, getValues, setValue]);
-}
-
 export function LessonForm({
   initialValues,
   currentInstructor,
@@ -106,12 +96,13 @@ export function LessonForm({
     name: 'students',
     keyName: 'key',
   });
-  const [students, startsAt, durationMinutes] = useWatch({
+  const [students, startsAt, durationMinutes, instructorId] = useWatch({
     control,
-    name: ['students', 'startsAt', 'durationMinutes'],
+    name: ['students', 'startsAt', 'durationMinutes', 'instructorId'],
   });
   const instructorOptions = useInstructorOptions(currentInstructor);
-  useSoleInstructorDefault(form, instructorOptions);
+  const isScheduled = Boolean(startsAt && startsAt > new Date());
+  const canRecord = canRecordSkills({ startsAt, instructorId });
   const { data: tree = [] } = useQuery(skillTreeQuery(true));
 
   return (
@@ -135,8 +126,11 @@ export function LessonForm({
                       render={({ field }) => (
                         <Select
                           label="Instructor"
+                          placeholder="Unassigned"
+                          description="Optional, can be assigned later"
                           data={instructorOptions}
                           searchable
+                          clearable
                           {...field}
                           error={errors.instructorId?.message}
                         />
@@ -150,6 +144,7 @@ export function LessonForm({
                       render={({ field }) => (
                         <DateTimePicker
                           label="Date and time"
+                          description="A future date schedules the lesson"
                           valueFormat="DD/MM/YYYY HH:mm"
                           {...field}
                           error={errors.startsAt?.message}
@@ -251,7 +246,11 @@ export function LessonForm({
                 <Paper withBorder p="lg">
                   <EmptyState
                     title="No students"
-                    description="Search for and add the students who took the lesson."
+                    description={
+                      isScheduled
+                        ? 'Search for and add the students booked for the lesson.'
+                        : 'Search for and add the students who took the lesson.'
+                    }
                   />
                 </Paper>
               ) : (
@@ -260,6 +259,12 @@ export function LessonForm({
                     key={field.key}
                     index={index}
                     tree={tree}
+                    canRecord={canRecord}
+                    lockedReason={
+                      isScheduled
+                        ? 'Skills can be recorded once the lesson has started.'
+                        : 'Assign an instructor to record skills.'
+                    }
                     onRemove={() => remove(index)}
                   />
                 ))
@@ -270,7 +275,18 @@ export function LessonForm({
           <Grid.Col span={{ base: 12, md: 4 }}>
             <Paper withBorder p="lg" className="sticky-aside glass">
               <Stack gap="xs">
-                <Title order={4}>Summary</Title>
+                <Group justify="space-between">
+                  <Title order={4}>Summary</Title>
+                  {isScheduled && (
+                    <Badge
+                      variant="light"
+                      color="violet"
+                      leftSection={<IconCalendarClock size={12} />}
+                    >
+                      Scheduled
+                    </Badge>
+                  )}
+                </Group>
                 <SummaryRow
                   label="Date"
                   value={startsAt ? formatDateTime(startsAt.toISOString()) : '—'}
@@ -278,6 +294,13 @@ export function LessonForm({
                 <SummaryRow
                   label="Duration"
                   value={durationMinutes ? formatDuration(durationMinutes) : '—'}
+                />
+                <SummaryRow
+                  label="Instructor"
+                  value={
+                    instructorOptions.find((option) => option.value === instructorId)
+                      ?.label ?? 'Unassigned'
+                  }
                 />
                 <SummaryRow label="Students" value={String(students?.length ?? 0)} />
                 <SummaryRow

@@ -5,6 +5,7 @@ import {
   NumberInput,
   Paper,
   Stack,
+  Text,
   TextInput,
   Textarea,
   Title,
@@ -41,7 +42,9 @@ function toFormValues(student?: Student): StudentFormValues {
 function toStudentInput(values: StudentFormValues): StudentInput {
   return {
     ...values,
-    email: emptyToNull(values.email),
+    phone: emptyToNull(values.phone),
+    emergencyContactName: emptyToNull(values.emergencyContactName),
+    emergencyContactPhone: emptyToNull(values.emergencyContactPhone),
     birthDate: values.birthDate ? dayjs(values.birthDate).format('YYYY-MM-DD') : null,
     notes: emptyToNull(values.notes),
   };
@@ -88,18 +91,18 @@ export function StudentForm({
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Phone"
-                {...register('phone')}
-                error={errors.phone?.message}
+                label="Email"
+                type="email"
+                {...register('email')}
+                error={errors.email?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput
-                label="Email"
+                label="Phone"
                 description="Optional"
-                type="email"
-                {...register('email')}
-                error={errors.email?.message}
+                {...register('phone')}
+                error={errors.phone?.message}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, sm: 6 }}>
@@ -139,9 +142,14 @@ export function StudentForm({
             </Grid.Col>
           </Grid>
 
-          <Title order={4} mt="sm">
-            Emergency contact
-          </Title>
+          <div>
+            <Title order={4} mt="sm">
+              Emergency contact
+            </Title>
+            <Text fz="sm" c="dimmed">
+              Optional, but worth having before the first lesson
+            </Text>
+          </div>
           <Grid>
             <Grid.Col span={{ base: 12, sm: 6 }}>
               <TextInput

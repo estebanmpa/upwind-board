@@ -20,8 +20,8 @@ import { LessonStudentOrmEntity } from './lesson-student.orm-entity.js';
 )
 export class LessonOrmEntity extends BaseOrmEntity {
   @Index('idx_lessons_instructor_id')
-  @Column({ name: 'instructor_id', type: 'uuid' })
-  instructorId: string;
+  @Column({ name: 'instructor_id', type: 'uuid', nullable: true })
+  instructorId: string | null;
 
   @ManyToOne(() => InstructorOrmEntity, { onDelete: 'RESTRICT' })
   @JoinColumn({
