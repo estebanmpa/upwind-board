@@ -6,6 +6,7 @@ import {
   parseCorsOrigins,
 } from './infrastructure/config/env.validation.js';
 import { setupApp } from './infrastructure/rest/setup-app.js';
+import helmet from 'helmet';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,6 +23,7 @@ async function bootstrap() {
     });
   }
 
+  app.use(helmet());
   app.enableShutdownHooks();
   await app.listen(config.get('PORT'), '0.0.0.0');
 }
