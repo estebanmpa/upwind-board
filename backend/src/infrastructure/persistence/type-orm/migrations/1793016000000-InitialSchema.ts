@@ -14,6 +14,7 @@ export class InitialSchema1793016000000 implements MigrationInterface {
         await queryRunner.query(`CREATE INDEX "idx_lesson_students_student_id" ON "lesson_students"  ("student_id") `);
         await queryRunner.query(`CREATE TABLE "skills" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "parent_id" uuid, "code" character varying(100) NOT NULL, "name" character varying(200) NOT NULL, "description" text, "sort_order" integer NOT NULL DEFAULT '0', "active" boolean NOT NULL DEFAULT true, CONSTRAINT "uq_skills_code" UNIQUE ("code"), CONSTRAINT "chk_skills_not_own_parent" CHECK ("parent_id" IS NULL OR "parent_id" <> "id"), CONSTRAINT "PK_0d3212120f4ecedf90864d7e298" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "idx_skills_parent_id" ON "skills"  ("parent_id") `);
+        await queryRunner.query(`CREATE TYPE "public"."skill_status" AS ENUM('introduced', 'practiced', 'mastered')`);
         await queryRunner.query(`CREATE TABLE "lesson_skill_records" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "lesson_student_id" uuid NOT NULL, "skill_id" uuid NOT NULL, "status" "public"."skill_status" NOT NULL, "notes" text, CONSTRAINT "uq_lesson_skill_records_lesson_student_id_skill_id" UNIQUE ("lesson_student_id", "skill_id"), CONSTRAINT "PK_8e8cd02f0842493bf1270492a08" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE INDEX "idx_lesson_skill_records_skill_id" ON "lesson_skill_records"  ("skill_id") `);
         await queryRunner.query(`ALTER TABLE "lessons" ADD CONSTRAINT "fk_lessons_instructor_id" FOREIGN KEY ("instructor_id") REFERENCES "instructors"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
@@ -33,6 +34,7 @@ export class InitialSchema1793016000000 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "lessons" DROP CONSTRAINT "fk_lessons_instructor_id"`);
         await queryRunner.query(`DROP INDEX "public"."idx_lesson_skill_records_skill_id"`);
         await queryRunner.query(`DROP TABLE "lesson_skill_records"`);
+        await queryRunner.query(`DROP TYPE "public"."skill_status"`);
         await queryRunner.query(`DROP INDEX "public"."idx_skills_parent_id"`);
         await queryRunner.query(`DROP TABLE "skills"`);
         await queryRunner.query(`DROP INDEX "public"."idx_lesson_students_student_id"`);
