@@ -16,5 +16,5 @@ COPY --from=builder /app/dist ./dist
 ENV NODE_ENV=production
 EXPOSE 5001
 
-# Pending migrations are applied on every deploy before the API starts.
-CMD [ "sh", "-c", "yarn migration:run:prod && yarn start:prod" ]
+# Migrations are not applied on start: run `yarn migration:run:prod` manually.
+CMD [ "yarn", "start:prod" ]

@@ -13,8 +13,6 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # Applies pending migrations, then starts Nest in watch mode.
-    command: sh -c "yarn migration:run && yarn start:dev"
     ports:
       - 5001:5001
     networks:

@@ -17,7 +17,8 @@ Requirements: Docker + Docker Compose.
 ```bash
 cp backend/.env.example backend/.env
 cp www/.env.example www/.env
-docker compose up --build -d   # migrations create the schema + IKO skill tree + a sample instructor
+docker compose up --build -d
+docker compose exec upwind-board-server yarn migration:run   # schema + IKO skill tree + a sample instructor
 ```
 
 | Service | Container | URL |
@@ -26,7 +27,7 @@ docker compose up --build -d   # migrations create the schema + IKO skill tree +
 | API | `upwind-board-backend-container` | <http://localhost:5001> (OpenAPI at `/docs`) |
 | PostgreSQL | `upwind-board-db-container` | `localhost:5434` (`localuser` / `localpassword`) |
 
-The API applies pending migrations every time it starts. Source folders are bind-mounted, so both apps reload on change. The containers run as uid 1000, so the files they generate belong to your user.
+Migrations are never applied automatically: run `yarn migration:run` inside the API container whenever there are new ones. Source folders are bind-mounted, so both apps reload on change. The containers run as uid 1000, so the files they generate belong to your user.
 
 Common commands:
 
@@ -40,7 +41,8 @@ docker compose down                              # stop (add -v to also drop the
 
 `docker-compose.prod.yml` builds the production images:
 
-- **API**: multi-stage build that runs pending migrations and then `node dist/main`.
+- **API**: multi-stage build that runs `node dist/main`. Apply pending migrations manually after each deploy that includes new ones:
+  `docker compose -f docker-compose.prod.yml exec upwind-board-server yarn migration:run:prod`
 - **Web app**: static build served by nginx.
 
 Both join the external `proxy-network`, where the shared `reverse-proxy` nginx container routes the public domains to `upwind-board-backend-container:5001` and `upwind-board-frontend-container:80`.

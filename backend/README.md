@@ -16,7 +16,8 @@ The whole stack (API, web app and PostgreSQL) runs with Docker from the reposito
 
 ```bash
 cp backend/.env.example backend/.env
-docker compose up --build -d   # applies migrations (schema + IKO skill tree + a sample instructor) on start
+docker compose up --build -d
+docker compose exec upwind-board-server yarn migration:run   # schema + IKO skill tree + a sample instructor
 ```
 
 The API listens on <http://localhost:5001> and the OpenAPI docs are served at **<http://localhost:5001/docs>** (JSON at `/docs-json`).
@@ -38,7 +39,7 @@ Run the scripts below inside the container (`docker compose exec upwind-board-se
 | --- | --- |
 | `yarn start:dev` | API in watch mode |
 | `yarn build` / `yarn start:prod` | Compiles to `dist/` and runs it |
-| `yarn migration:run:prod` | Applies pending migrations from an existing build (used by the production image) |
+| `yarn migration:run:prod` | Applies pending migrations from an existing build (run manually in the production container) |
 | `yarn migration:run` | Applies pending migrations |
 | `yarn migration:revert` | Reverts the last migration |
 | `yarn migration:show` | Lists migrations and their status |
@@ -46,7 +47,7 @@ Run the scripts below inside the container (`docker compose exec upwind-board-se
 | `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Name>` | Generates a new migration (after `yarn build`) |
 | `yarn lint` / `yarn format` | oxlint / prettier |
 
-The migration commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
+The migration commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` and `migrationsRun` are always disabled and no container applies migrations on start: they always run manually.
 
 ## Initial data
 
