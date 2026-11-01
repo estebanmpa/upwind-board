@@ -1,0 +1,90 @@
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.5);
+  --page-glow:
+    radial-gradient(circle at 10% 0%, rgba(0, 113, 255, 0.12), transparent 40%),
+    radial-gradient(circle at 90% 20%, rgba(56, 217, 169, 0.14), transparent 40%);
+}
+
+[data-mantine-color-scheme='dark'] {
+  --glass-bg: rgba(26, 27, 30, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+body {
+  background-image: var(--page-glow);
+  background-attachment: fixed;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(160%);
+  -webkit-backdrop-filter: blur(16px) saturate(160%);
+  border: 1px solid var(--glass-border);
+}
+
+.hover-lift {
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px -18px rgba(0, 84, 205, 0.45);
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+
+.fade-in-up {
+  animation: fade-in-up 500ms ease both;
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gradient-text {
+  background: linear-gradient(
+    120deg,
+    var(--mantine-color-brand-5),
+    var(--mantine-color-teal-4)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-surface {
+  background: linear-gradient(
+    120deg,
+    var(--mantine-color-brand-6),
+    var(--mantine-color-teal-5)
+  );
+  color: var(--mantine-color-white);
+}
+
+.sticky-aside {
+  position: sticky;
+  top: calc(64px + var(--mantine-spacing-lg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in-up {
+    animation: none;
+  }
+
+  .hover-lift:hover {
+    transform: none;
+  }
+}
