@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { BaseOrmEntity } from './base.orm-entity.js';
 import { InstructorOrmEntity } from './instructor.orm-entity.js';
+import { LessonEquipmentOrmEntity } from './lesson-equipment.orm-entity.js';
 import { LessonStudentOrmEntity } from './lesson-student.orm-entity.js';
 
 @Entity({ name: 'lessons' })
@@ -59,4 +60,7 @@ export class LessonOrmEntity extends BaseOrmEntity {
 
   @OneToMany(() => LessonStudentOrmEntity, (ls) => ls.lesson)
   students: Relation<LessonStudentOrmEntity[]>;
+
+  @OneToMany(() => LessonEquipmentOrmEntity, (le) => le.lesson)
+  equipment: Relation<LessonEquipmentOrmEntity[]>;
 }

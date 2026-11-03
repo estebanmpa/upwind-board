@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
+  IsArray,
   IsIn,
   IsInt,
   IsISO8601,
@@ -74,4 +75,15 @@ export class CreateLessonDto {
   @ValidateNested({ each: true })
   @Type(() => LessonStudentInputDto)
   students: LessonStudentInputDto[];
+
+  /**
+   * School equipment used in the lesson. Only available items can be newly
+   * assigned, and an item cannot be in two overlapping lessons.
+   * On update it replaces the current list; omitting it keeps it.
+   */
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(50)
+  @IsUUID('all', { each: true })
+  equipmentIds?: string[];
 }

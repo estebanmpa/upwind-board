@@ -37,6 +37,7 @@ export function emptyLessonForm(
     windMinKnots: null,
     windMaxKnots: null,
     notes: '',
+    equipmentIds: [],
     students: students.map(emptyLessonStudent),
   };
 }
@@ -51,6 +52,7 @@ export function lessonToFormValues(lesson: Lesson): LessonFormValues {
     windMinKnots: lesson.windMinKnots,
     windMaxKnots: lesson.windMaxKnots,
     notes: lesson.notes ?? '',
+    equipmentIds: lesson.equipment.map((item) => item.id),
     students: lesson.students.map((participation) => ({
       studentId: participation.studentId,
       firstName: participation.student.firstName,
@@ -79,6 +81,7 @@ export function formValuesToPayload(values: LessonFormValues): LessonPayload {
     windMinKnots: values.windMinKnots,
     windMaxKnots: values.windMaxKnots,
     notes: emptyToNull(values.notes),
+    equipmentIds: values.equipmentIds,
     students: values.students.map((student) => ({
       studentId: student.studentId,
       kiteSizeM2: student.kiteSizeM2,

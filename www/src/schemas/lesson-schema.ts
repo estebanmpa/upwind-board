@@ -39,6 +39,7 @@ export const lessonSchema = z
     windMinKnots: knots,
     windMaxKnots: knots,
     notes: z.string().trim(),
+    equipmentIds: z.array(z.string()).max(50, 'Maximum 50 items'),
     students: z.array(lessonStudentSchema).min(1, 'Add at least one student').max(20),
   })
   .refine(

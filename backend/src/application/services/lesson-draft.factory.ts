@@ -37,6 +37,7 @@ export function createLessonDraft(dto: CreateLessonDto): LessonDraft {
     windMinKnots: dto.windMinKnots ?? null,
     windMaxKnots: dto.windMaxKnots ?? null,
     notes: dto.notes ?? null,
+    equipmentIds: dto.equipmentIds ?? [],
     students: dto.students.map(newStudent),
   };
 }
@@ -89,6 +90,10 @@ export function mergeLessonDraft(
     windMinKnots: pick(dto.windMinKnots, lesson.windMinKnots),
     windMaxKnots: pick(dto.windMaxKnots, lesson.windMaxKnots),
     notes: pick(dto.notes, lesson.notes),
+    equipmentIds: pick(
+      dto.equipmentIds,
+      lesson.equipment.map((item) => item.id),
+    ),
     students,
   };
 }

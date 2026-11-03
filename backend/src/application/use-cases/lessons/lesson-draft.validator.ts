@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { EquipmentStatus } from '../../../domain/entities/equipment.entity.js';
 import { Lesson, LessonDraft } from '../../../domain/entities/lesson.entity.js';
 import {
   BusinessRuleViolationError,
   NotFoundError,
 } from '../../../domain/errors/domain.error.js';
+import { EquipmentRepository } from '../../../domain/repositories/equipment.repository.js';
 import { InstructorRepository } from '../../../domain/repositories/instructor.repository.js';
 import { SkillRepository } from '../../../domain/repositories/skill.repository.js';
 import { StudentRepository } from '../../../domain/repositories/student.repository.js';
@@ -19,6 +21,7 @@ export class LessonDraftValidator {
     private readonly instructors: InstructorRepository,
     private readonly students: StudentRepository,
     private readonly skills: SkillRepository,
+    private readonly equipment: EquipmentRepository,
   ) {}
 
   /**
@@ -35,6 +38,7 @@ export class LessonDraftValidator {
     await this.validateInstructor(draft, previous);
     await this.validateStudents(draft);
     await this.validateSkillRecords(draft, previous);
+    await this.validateEquipment(draft, previous);
   }
 
   /**
@@ -147,6 +151,55 @@ export class LessonDraftValidator {
     if (inactive.length > 0) {
       throw new BusinessRuleViolationError(
         `Inactive skills cannot be recorded: ${[...new Set(inactive)].join(', ')}`,
+      );
+    }
+  }
+
+  private async validateEquipment(draft: LessonDraft, previous?: Lesson) {
+    const ids = draft.equipmentIds;
+    if (ids.length === 0) return;
+    const repeated = duplicates(ids);
+    if (repeated.length > 0) {
+      throw new BusinessRuleViolationError(
+        `Equipment listed more than once: ${repeated.join(', ')}`,
+      );
+    }
+
+    const items = await this.equipment.findByIds(ids);
+    const found = new Map(items.map((item) => [item.id, item]));
+    const missing = ids.filter((id) => !found.has(id));
+    if (missing.length > 0)
+      throw new NotFoundError('Equipment', missing.join(', '));
+
+    // Gear that went to maintenance or was retired stays on the lessons that
+    // already used it, but cannot be assigned anew.
+    const alreadyAssigned = new Set(previous?.equipment.map((e) => e.id));
+    const unavailable = items.filter(
+      (item) =>
+        item.status !== EquipmentStatus.Available &&
+        !alreadyAssigned.has(item.id),
+    );
+    if (unavailable.length > 0) {
+      throw new BusinessRuleViolationError(
+        `Equipment not available: ${unavailable.map((i) => i.name).join(', ')}`,
+      );
+    }
+
+    const endsAt = new Date(
+      draft.startsAt.getTime() + draft.durationMinutes * 60_000,
+    );
+    const bookings = await this.equipment.findBookings(
+      ids,
+      draft.startsAt,
+      endsAt,
+      draft.id,
+    );
+    if (bookings.length > 0) {
+      const names = [
+        ...new Set(bookings.map((b) => found.get(b.equipmentId)!.name)),
+      ];
+      throw new BusinessRuleViolationError(
+        `Equipment already assigned to another lesson at that time: ${names.join(', ')}`,
       );
     }
   }

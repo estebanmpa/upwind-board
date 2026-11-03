@@ -7,6 +7,7 @@ import {
   Divider,
   Grid,
   Group,
+  MultiSelect,
   NumberInput,
   Paper,
   Select,
@@ -27,6 +28,7 @@ import {
   useWatch,
 } from 'react-hook-form';
 import { EmptyState } from '@/components/common/EmptyState';
+import { availableEquipmentQuery } from '@/queries/equipment';
 import { activeInstructorsQuery } from '@/queries/instructors';
 import { skillTreeQuery } from '@/queries/skills';
 import {
@@ -35,8 +37,10 @@ import {
   type LessonFormValues,
 } from '@/schemas/lesson-schema';
 import type { PersonSummary } from '@/types/api';
+import type { EquipmentSummary } from '@/types/equipment';
 import type { LessonPayload } from '@/types/lesson';
 import { WIND_DIRECTIONS } from '@/types/wind';
+import { equipmentOptions } from '@/utils/equipment';
 import { formatDateTime, formatDuration, fullName } from '@/utils/format';
 import { toNumberOrNull } from '@/utils/form';
 import {
@@ -51,6 +55,8 @@ interface LessonFormProps {
   initialValues: Partial<LessonFormValues>;
   /** Keeps an inactive instructor selectable when editing their lessons. */
   currentInstructor?: PersonSummary;
+  /** Keeps equipment no longer available selectable when editing the lesson. */
+  currentEquipment?: EquipmentSummary[];
   submitLabel: string;
   isSubmitting: boolean;
   onSubmit: (payload: LessonPayload) => void;
@@ -76,6 +82,7 @@ function useInstructorOptions(currentInstructor?: PersonSummary) {
 export function LessonForm({
   initialValues,
   currentInstructor,
+  currentEquipment,
   submitLabel,
   isSubmitting,
   onSubmit,
@@ -96,11 +103,12 @@ export function LessonForm({
     name: 'students',
     keyName: 'key',
   });
-  const [students, startsAt, durationMinutes, instructorId] = useWatch({
+  const [students, startsAt, durationMinutes, instructorId, equipmentIds] = useWatch({
     control,
-    name: ['students', 'startsAt', 'durationMinutes', 'instructorId'],
+    name: ['students', 'startsAt', 'durationMinutes', 'instructorId', 'equipmentIds'],
   });
   const instructorOptions = useInstructorOptions(currentInstructor);
+  const { data: availableEquipment } = useQuery(availableEquipmentQuery());
   const isScheduled = Boolean(startsAt && startsAt > new Date());
   const canRecord = canRecordSkills({ startsAt, instructorId });
   const { data: tree = [] } = useQuery(skillTreeQuery(true));
@@ -217,6 +225,29 @@ export function LessonForm({
                     </Grid.Col>
                   ))}
                   <Grid.Col span={12}>
+                    <Controller
+                      control={control}
+                      name="equipmentIds"
+                      render={({ field }) => (
+                        <MultiSelect
+                          label="Equipment"
+                          placeholder={field.value?.length ? undefined : 'None'}
+                          description="Optional, school gear used in the lesson"
+                          data={equipmentOptions(
+                            availableEquipment?.items ?? [],
+                            currentEquipment,
+                          )}
+                          nothingFoundMessage="No available equipment"
+                          searchable
+                          clearable
+                          hidePickedOptions
+                          {...field}
+                          error={errors.equipmentIds?.message}
+                        />
+                      )}
+                    />
+                  </Grid.Col>
+                  <Grid.Col span={12}>
                     <Textarea
                       label="Lesson notes"
                       autosize
@@ -303,6 +334,7 @@ export function LessonForm({
                   }
                 />
                 <SummaryRow label="Students" value={String(students?.length ?? 0)} />
+                <SummaryRow label="Equipment" value={String(equipmentIds?.length ?? 0)} />
                 <SummaryRow
                   label="Skills recorded"
                   value={String(countRecords(students ?? []))}

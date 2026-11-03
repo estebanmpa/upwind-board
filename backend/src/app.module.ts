@@ -6,6 +6,7 @@ import {
   EnvironmentVariables,
   validateEnv,
 } from './infrastructure/config/env.validation.js';
+import { EquipmentModule } from './infrastructure/modules/equipment.module.js';
 import { InstructorsModule } from './infrastructure/modules/instructors.module.js';
 import { StudentsModule } from './infrastructure/modules/students.module.js';
 import { LessonsModule } from './infrastructure/modules/lessons.module.js';
@@ -32,6 +33,7 @@ import { SkillsModule } from './infrastructure/modules/skills.module.js';
     SkillsModule,
     LessonsModule,
     ProgressModule,
+    EquipmentModule,
   ],
 })
 export class AppModule {}

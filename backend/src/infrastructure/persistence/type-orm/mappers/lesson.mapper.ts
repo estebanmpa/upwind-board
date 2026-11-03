@@ -1,9 +1,11 @@
 import {
+  EquipmentSummary,
   Lesson,
   LessonSkillRecord,
   LessonStudent,
   PersonSummary,
 } from '../../../../domain/entities/lesson.entity.js';
+import { LessonEquipmentOrmEntity } from '../entities/lesson-equipment.orm-entity.js';
 import { LessonSkillRecordOrmEntity } from '../entities/lesson-skill-record.orm-entity.js';
 import { LessonStudentOrmEntity } from '../entities/lesson-student.orm-entity.js';
 import { LessonOrmEntity } from '../entities/lesson.orm-entity.js';
@@ -24,7 +26,10 @@ const toPersonSummary = (person: {
 });
 
 export class LessonMapper {
-  /** Expects `instructor` (when assigned), `students.student` and `students.skillRecords` loaded. */
+  /**
+   * Expects `instructor` (when assigned), `students.student`,
+   * `students.skillRecords` and `equipment.equipment` loaded.
+   */
   static toDomain(entity: LessonOrmEntity): Lesson {
     return new Lesson({
       id: entity.id,
@@ -40,6 +45,9 @@ export class LessonMapper {
       students: [...(entity.students ?? [])]
         .sort(byCreation)
         .map((s) => LessonMapper.studentToDomain(s)),
+      equipment: (entity.equipment ?? [])
+        .map((le) => LessonMapper.equipmentToDomain(le))
+        .sort((a, b) => a.name.localeCompare(b.name)),
       createdAt: entity.createdAt,
       updatedAt: entity.updatedAt,
     });
@@ -59,6 +67,13 @@ export class LessonMapper {
         .sort(byCreation)
         .map((r) => LessonMapper.recordToDomain(r)),
     };
+  }
+
+  private static equipmentToDomain(
+    entity: LessonEquipmentOrmEntity,
+  ): EquipmentSummary {
+    const item = entity.equipment!;
+    return { id: item.id, name: item.name, type: item.type, size: item.size };
   }
 
   private static recordToDomain(
