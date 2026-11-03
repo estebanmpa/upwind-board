@@ -22,6 +22,7 @@ export function StudentCreatePage() {
   return (
     <>
       <PageHeader
+        back={{ to: '/students' }}
         title="New student"
         description="Name and email are enough; the rest can be completed later"
       />

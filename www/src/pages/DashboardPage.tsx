@@ -47,7 +47,7 @@ export function DashboardPage() {
     lessonsQuery({ to: now, limit: RECENT_LESSONS }),
   );
   const month = useMonthStats(now);
-console.log('month', month);
+  console.log('month', month);
   return (
     <>
       <PageHeader

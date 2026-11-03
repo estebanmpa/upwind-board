@@ -25,7 +25,11 @@ export function InstructorEditPage({ instructorId }: { instructorId: string }) {
 
   return (
     <>
-      <PageHeader title="Edit instructor" description={fullName(instructor)} />
+      <PageHeader
+        back={{ to: '/instructors' }}
+        title="Edit instructor"
+        description={fullName(instructor)}
+      />
       <InstructorForm
         instructor={instructor}
         submitLabel="Save changes"
