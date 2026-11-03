@@ -36,6 +36,7 @@ export function LessonCreatePage({ studentId }: { studentId?: string }) {
   return (
     <>
       <PageHeader
+        back={{ to: '/lessons' }}
         title="New lesson"
         description="Schedule an upcoming lesson or log one that already happened"
       />

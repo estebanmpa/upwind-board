@@ -25,7 +25,11 @@ export function StudentEditPage({ studentId }: { studentId: string }) {
 
   return (
     <>
-      <PageHeader title="Edit student" description={fullName(student)} />
+      <PageHeader
+        back={{ to: '/students/$studentId', params: { studentId } }}
+        title="Edit student"
+        description={fullName(student)}
+      />
       <StudentForm
         student={student}
         submitLabel="Save changes"

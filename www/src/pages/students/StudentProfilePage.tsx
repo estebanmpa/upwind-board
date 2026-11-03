@@ -22,6 +22,7 @@ import {
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { BackButton } from '@/components/common/BackButton';
 import { PersonAvatar } from '@/components/common/PersonAvatar';
 import { StatCard } from '@/components/common/StatCard';
 import { StatusLegend } from '@/components/skills/StatusLegend';
@@ -133,6 +134,7 @@ export function StudentProfilePage({ studentId }: { studentId: string }) {
 
   return (
     <>
+      <BackButton fallback={{ to: '/students' }} />
       <ProfileHeader student={student} />
       <SimpleGrid cols={{ base: 1, xs: 2, lg: 4 }} mb="xl" className="fade-in-up">
         <StatCard

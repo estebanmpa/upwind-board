@@ -21,7 +21,7 @@ export function InstructorCreatePage() {
 
   return (
     <>
-      <PageHeader title="New instructor" />
+      <PageHeader back={{ to: '/instructors' }} title="New instructor" />
       <InstructorForm
         submitLabel="Create instructor"
         isSubmitting={createInstructor.isPending}
