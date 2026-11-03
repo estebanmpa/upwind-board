@@ -23,6 +23,7 @@ Production builds call the API directly at `VITE_API_URL` (read from `.env` at b
 | `yarn build` | Typecheck + production build in `dist/` |
 | `yarn preview` | Serves the production build |
 | `yarn format` | Prettier |
+| `yarn test` | Unit tests (Vitest) |
 
 ## Screens
 
@@ -36,11 +37,12 @@ Production builds call the API directly at `VITE_API_URL` (read from `.env` at b
 | `/students/:id` | Profile: IKO progression per level, lesson history and student details |
 | `/students/new`, `/students/:id/edit` | Create and edit students |
 | `/instructors`, `/instructors/new`, `/instructors/:id` | Instructor management |
+| `/inventory` | School equipment: create, edit, filter by type and status, retire and delete |
 | `/skills` | IKO tree: create, edit, move, deactivate and delete skills |
 
 Routes and UI copy are in English.
 
-When logging a lesson, each student gets a card with kite, board, notes and a per-level editor where each skill is marked as Introduced, Practiced or Mastered. Next to every skill, the editor shows the last status recorded for that student. Inactive skills only show up if the lesson already recorded them.
+When logging a lesson, each student gets a card with kite, board, notes and a per-level editor where each skill is marked as Introduced, Practiced or Mastered. Next to every skill, the editor shows the last status recorded for that student. Inactive skills only show up if the lesson already recorded them. School equipment can optionally be assigned to the lesson from the Equipment picker (only available items are offered).
 
 ## Project structure
 
@@ -53,7 +55,7 @@ src/
   types/        API types and constants (statuses, wind directions)
   utils/        pure logic: formatting, skill tree, progress, lesson payload building
   hooks/        reusable hooks (paged search, delete confirmation)
-  components/   UI by domain (layout, common, lessons, students, skills, instructors)
+  components/   UI by domain (layout, common, lessons, students, skills, instructors, equipment)
   pages/        one page per screen
   routes/       TanStack Router routes (thin: loader + page)
   theme/        Mantine theme and global styles (glassmorphism, animations)

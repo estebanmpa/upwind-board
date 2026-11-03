@@ -16,6 +16,7 @@ import {
   Page,
   PageRequest,
 } from '../../../../domain/repositories/pagination.js';
+import { LessonEquipmentOrmEntity } from '../entities/lesson-equipment.orm-entity.js';
 import { LessonSkillRecordOrmEntity } from '../entities/lesson-skill-record.orm-entity.js';
 import { LessonStudentOrmEntity } from '../entities/lesson-student.orm-entity.js';
 import { LessonOrmEntity } from '../entities/lesson.orm-entity.js';
@@ -24,6 +25,7 @@ import { LessonMapper } from '../mappers/lesson.mapper.js';
 const AGGREGATE_RELATIONS = {
   instructor: true,
   students: { student: true, skillRecords: true },
+  equipment: { equipment: true },
 } as const;
 
 @Injectable()
@@ -119,6 +121,17 @@ export class TypeOrmLessonRepository extends LessonRepository {
         notes: draft.notes,
       }),
     );
+
+    await manager.delete(LessonEquipmentOrmEntity, { lessonId: lesson.id });
+    if (draft.equipmentIds.length > 0) {
+      await manager.insert(
+        LessonEquipmentOrmEntity,
+        draft.equipmentIds.map((equipmentId) => ({
+          lessonId: lesson.id,
+          equipmentId,
+        })),
+      );
+    }
 
     // Students (and, by cascade, their records) missing from the draft go away.
     await this.deleteMissing(

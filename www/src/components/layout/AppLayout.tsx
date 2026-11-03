@@ -14,6 +14,7 @@ import {
   IconCalendarWeek,
   IconLayoutDashboard,
   IconListTree,
+  IconPackage,
   IconPlus,
   IconSchool,
   IconUsers,
@@ -24,7 +25,14 @@ import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle';
 import { Logo } from '@/components/common/Logo';
 
 interface NavItem {
-  to: '/' | '/schedule' | '/students' | '/lessons' | '/instructors' | '/skills';
+  to:
+    | '/'
+    | '/schedule'
+    | '/students'
+    | '/lessons'
+    | '/instructors'
+    | '/inventory'
+    | '/skills';
   label: string;
   icon: Icon;
   exact?: boolean;
@@ -36,6 +44,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: '/lessons', label: 'Lessons', icon: IconCalendarEvent },
   { to: '/students', label: 'Students', icon: IconUsers },
   { to: '/instructors', label: 'Instructors', icon: IconSchool },
+  { to: '/inventory', label: 'Inventory', icon: IconPackage },
   { to: '/skills', label: 'IKO progression', icon: IconListTree },
 ];
 

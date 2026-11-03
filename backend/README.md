@@ -45,6 +45,7 @@ Run the scripts below inside the container (`docker compose exec upwind-board-se
 | `yarn migration:check` | Fails if the entities differ from the schema the migrations produce |
 | `yarn typeorm migration:generate src/infrastructure/persistence/type-orm/migrations/<Name>` | Generates a new migration (after `yarn build`) |
 | `yarn lint` / `yarn format` | oxlint / prettier |
+| `yarn test` | Unit tests (Vitest) |
 
 The migration commands build first and use `dist/infrastructure/persistence/type-orm/data-source.js`, which reads `.env`. New migrations must be registered in `src/infrastructure/persistence/type-orm/migrations/index.ts`. `synchronize` is always disabled.
 
@@ -54,10 +55,11 @@ The migration commands build first and use `dist/infrastructure/persistence/type
 
 ## Data model
 
-`instructors`, `students`, `skills` (self-referencing tree through `parent_id`), `lessons`, `lesson_students` and `lesson_skill_records`. Every table uses uuid ids (`gen_random_uuid()`), `created_at`/`updated_at` and snake_case names.
+`instructors`, `students`, `skills` (self-referencing tree through `parent_id`), `lessons`, `lesson_students`, `lesson_skill_records`, `equipment` and `lesson_equipment`. Every table uses uuid ids (`gen_random_uuid()`), `created_at`/`updated_at` and snake_case names.
 
 - **Skill tree**: an adjacency list resolved with `WITH RECURSIVE`. When a skill is moved, the service checks that the new parent is neither the skill itself nor one of its descendants (there is also a `CHECK` against `parent_id = id`).
 - **Only leaves are evaluated**: a lesson record can only point to a skill without children. For the same reason, a skill that already has records cannot get children.
+- **Equipment**: the school inventory (`type`: kite, board, bar, harness, wetsuit, impact_vest, helmet, radio, other; `status`: available, maintenance, retired). A lesson can optionally reference any number of items through `lesson_equipment`. Only `available` items can be newly assigned, and the same item cannot be in two lessons whose time windows (`starts_at` + `duration_minutes`) overlap.
 - **Progression is not stored**: each leaf's current status is the latest one recorded for that student, ordered by `lessons.starts_at`. If two lessons start at the same time, the most recently modified record wins.
 
 ## Endpoints
@@ -68,6 +70,7 @@ The migration commands build first and use `dist/infrastructure/persistence/type
 | Students | `GET/POST /students`, `GET/PATCH/DELETE /students/:id` (`?search=` by first, last or full name) |
 | Skills | `GET /skills/tree` (`?includeInactive=true`), `GET/POST /skills`, `GET/PATCH/DELETE /skills/:id` |
 | Lessons | `GET /lessons` (`?instructorId=&studentId=&from=&to=`), `POST /lessons`, `GET/PATCH/DELETE /lessons/:id` |
+| Equipment | `GET/POST /equipment`, `GET/PATCH/DELETE /equipment/:id` (`?search=&type=&status=&page=&limit=`) |
 | Progress | `GET /students/:id/progress`, `GET /students/:id/lessons` |
 
 Lists are paginated (`page` starts at 1, `limit` defaults to 20 with a maximum of 100) and return `{ items, total, page, limit }`.
@@ -94,7 +97,8 @@ Lists are paginated (`page` starts at 1, `limit` defaults to 20 with a maximum o
         { "skillId": "…", "status": "practiced", "notes": "Struggles with the power zone" }
       ]
     }
-  ]
+  ],
+  "equipmentIds": ["…"]
 }
 ```
 
@@ -106,7 +110,9 @@ In `PATCH /lessons/:id` every field is optional. When `students` is sent, it is 
 - Students already in the lesson are matched by `studentId` and keep their id. Fields that are not sent keep their value; `null` clears them.
 - Omitting `skillRecords` keeps the current records. Sending it replaces the list (records for the same skill keep their id).
 
-Responses from `/lessons` also include, for display only, the instructor's name (`instructor: { id, firstName, lastName }`) and each student's name (`students[].student`). They are ignored in `POST`/`PATCH` bodies.
+`equipmentIds` is optional. In `PATCH`, omitting it keeps the assigned equipment and sending it replaces the list. Equipment that went to maintenance or was retired can stay on lessons that already had it.
+
+Responses from `/lessons` also include, for display only, the instructor's name (`instructor: { id, firstName, lastName }`) and each student's name (`students[].student`) and the assigned equipment (`equipment: [{ id, name, type, size }]`). They are ignored in `POST`/`PATCH` bodies.
 
 ### Progress
 
@@ -116,9 +122,9 @@ Responses from `/lessons` also include, for display only, the instructor's name 
 
 Every error has the same shape: `{ statusCode, error, message, path, timestamp }`.
 
-- **400**: payload validation, malformed id, or a broken business rule (non-leaf skill, cycle in the tree, minimum wind above maximum, repeated student or skill, inactive instructor, inactive skill).
+- **400**: payload validation, malformed id, or a broken business rule (non-leaf skill, cycle in the tree, minimum wind above maximum, repeated student, skill or equipment, inactive instructor, inactive skill, unavailable or double-booked equipment).
 - **404**: the resource does not exist, whether it comes from the URL or is referenced in the body.
-- **409**: duplicates (instructor email, skill code) or deleting something in use (instructor or student with lessons, skill with children or records).
+- **409**: duplicates (instructor email, skill code, equipment serial number) or deleting something in use (instructor, student or equipment with lessons, skill with children or records).
 
 ## Project structure
 

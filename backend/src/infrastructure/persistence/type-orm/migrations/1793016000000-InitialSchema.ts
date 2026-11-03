@@ -22,6 +22,14 @@ export class InitialSchema1793016000000 implements MigrationInterface {
         await queryRunner.query(`ALTER TABLE "skills" ADD CONSTRAINT "fk_skills_parent_id" FOREIGN KEY ("parent_id") REFERENCES "skills"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "lesson_skill_records" ADD CONSTRAINT "fk_lesson_skill_records_lesson_student_id" FOREIGN KEY ("lesson_student_id") REFERENCES "lesson_students"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "lesson_skill_records" ADD CONSTRAINT "fk_lesson_skill_records_skill_id" FOREIGN KEY ("skill_id") REFERENCES "skills"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
+        await queryRunner.query(`CREATE TYPE "public"."equipment_type" AS ENUM('kite', 'board', 'bar', 'harness', 'wetsuit', 'impact_vest', 'helmet', 'radio', 'other')`);
+        await queryRunner.query(`CREATE TYPE "public"."equipment_status" AS ENUM('available', 'maintenance', 'retired')`);
+        await queryRunner.query(`CREATE TABLE "equipment" ("id" uuid NOT NULL DEFAULT gen_random_uuid(), "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "name" character varying(100) NOT NULL, "type" "public"."equipment_type" NOT NULL, "brand" character varying(100), "model" character varying(100), "size" character varying(50), "serial_number" character varying(100), "status" "public"."equipment_status" NOT NULL DEFAULT 'available', "notes" text, CONSTRAINT "uq_equipment_serial_number" UNIQUE ("serial_number"), CONSTRAINT "PK_0722e1b9d6eb19f5874c1678740" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE INDEX "idx_equipment_type" ON "equipment"  ("type") `);
+        await queryRunner.query(`CREATE TABLE "lesson_equipment" ("lesson_id" uuid NOT NULL, "equipment_id" uuid NOT NULL, CONSTRAINT "PK_f50fe52014d6e9543b53801f9f4" PRIMARY KEY ("lesson_id", "equipment_id"))`);
+        await queryRunner.query(`CREATE INDEX "idx_lesson_equipment_equipment_id" ON "lesson_equipment"  ("equipment_id") `);
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" ADD CONSTRAINT "fk_lesson_equipment_lesson_id" FOREIGN KEY ("lesson_id") REFERENCES "lessons"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" ADD CONSTRAINT "fk_lesson_equipment_equipment_id" FOREIGN KEY ("equipment_id") REFERENCES "equipment"("id") ON DELETE RESTRICT ON UPDATE NO ACTION`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
@@ -43,5 +51,13 @@ export class InitialSchema1793016000000 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."idx_lessons_instructor_id"`);
         await queryRunner.query(`DROP TABLE "lessons"`);
         await queryRunner.query(`DROP TABLE "instructors"`);
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_equipment_id"`);
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_lesson_id"`);
+        await queryRunner.query(`DROP INDEX "public"."idx_lesson_equipment_equipment_id"`);
+        await queryRunner.query(`DROP TABLE "lesson_equipment"`);
+        await queryRunner.query(`DROP INDEX "public"."idx_equipment_type"`);
+        await queryRunner.query(`DROP TABLE "equipment"`);
+        await queryRunner.query(`DROP TYPE "public"."equipment_status"`);
+        await queryRunner.query(`DROP TYPE "public"."equipment_type"`);
     }
 }

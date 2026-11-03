@@ -1,4 +1,5 @@
 import type { PageParams, PersonSummary } from './api';
+import type { EquipmentSummary } from './equipment';
 import type { SkillStatus } from './skill';
 import type { WindDirection } from './wind';
 
@@ -32,6 +33,7 @@ export interface Lesson {
   windMaxKnots: number | null;
   notes: string | null;
   students: LessonStudent[];
+  equipment: EquipmentSummary[];
   createdAt: string;
   updatedAt: string;
 }
@@ -46,6 +48,8 @@ export interface LessonPayload {
   windMinKnots: number | null;
   windMaxKnots: number | null;
   notes: string | null;
+  /** Replaces the equipment assigned to the lesson. */
+  equipmentIds: string[];
   students: {
     studentId: string;
     kiteSizeM2: number | null;

@@ -1,4 +1,5 @@
 import type { PageParams } from '@/types/api';
+import type { EquipmentFilters } from '@/types/equipment';
 import type { InstructorFilters } from '@/types/instructor';
 import type { LessonFilters } from '@/types/lesson';
 import type { StudentFilters } from '@/types/student';
@@ -25,5 +26,9 @@ export const queryKeys = {
     all: ['lessons'] as const,
     list: (filters: LessonFilters) => ['lessons', 'list', filters] as const,
     detail: (id: string) => ['lessons', 'detail', id] as const,
+  },
+  equipment: {
+    all: ['equipment'] as const,
+    list: (filters: EquipmentFilters) => ['equipment', 'list', filters] as const,
   },
 };

@@ -15,13 +15,14 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "oxlint --type-aware src/",
+    "test": "vitest run",
     "typeorm": "typeorm -d dist/infrastructure/persistence/type-orm/data-source.js",
     "migration:run": "yarn build && typeorm migration:run -d dist/infrastructure/persistence/type-orm/data-source.js",
     "migration:run:prod": "typeorm migration:run -d dist/infrastructure/persistence/type-orm/data-source.js",
     "migration:revert": "yarn build && typeorm migration:revert -d dist/infrastructure/persistence/type-orm/data-source.js",
     "migration:show": "yarn build && typeorm migration:show -d dist/infrastructure/persistence/type-orm/data-source.js",
     "migration:generate": "sh -c 'test -n \"$0\" && [ \"$0\" != sh ] || { echo \"Usage: yarn migration:generate <MigrationName>\"; exit 1; }; yarn build && typeorm migration:generate -d dist/infrastructure/persistence/type-orm/data-source.js \"src/infrastructure/persistence/type-orm/migrations/$0\"'",
-    "migration:check":"yarn build && typeorm migration:generate --check --dryrun -d dist/infrastructure/persistence/type-orm/data-source.js src/infrastructure/persistence/type-orm/migrations/Check"
+    "migration:check": "yarn build && typeorm migration:generate --check --dryrun -d dist/infrastructure/persistence/type-orm/data-source.js src/infrastructure/persistence/type-orm/migrations/Check"
   },
   "dependencies": {
     "@nestjs/common": "^12.0.1",
@@ -50,6 +51,7 @@
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "typescript": "^6.0.2",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "vitest": "^5.1.0"
   }
 }

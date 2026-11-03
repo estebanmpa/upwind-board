@@ -1,3 +1,4 @@
+import { EquipmentType } from './equipment.entity.js';
 import { SkillStatus } from './skill-status.enum.js';
 
 export class LessonSkillRecord {
@@ -14,6 +15,14 @@ export class PersonSummary {
   lastName: string;
 }
 
+/** Read-only description of a piece of gear assigned to the lesson. */
+export class EquipmentSummary {
+  id: string;
+  name: string;
+  type: EquipmentType;
+  size: string | null;
+}
+
 export class LessonStudent {
   id: string;
   studentId: string;
@@ -25,7 +34,8 @@ export class LessonStudent {
 }
 
 /**
- * Aggregate root: a lesson owns its students and their skill records.
+ * Aggregate root: a lesson owns its students and their skill records, and
+ * references the school equipment assigned to it.
  * A lesson starting in the future is a scheduled one; its instructor can be
  * assigned later.
  */
@@ -41,6 +51,7 @@ export class Lesson {
   windMaxKnots: number | null;
   notes: string | null;
   students: LessonStudent[];
+  equipment: EquipmentSummary[];
   createdAt: Date;
   updatedAt: Date;
 
@@ -56,8 +67,13 @@ type WithOptionalId<T> = Omit<T, 'id'> & { id?: string };
  * children with id are updated and the ones missing from the draft are removed.
  */
 export type LessonDraft = WithOptionalId<
-  Omit<Lesson, 'instructor' | 'students' | 'createdAt' | 'updatedAt'>
+  Omit<
+    Lesson,
+    'instructor' | 'students' | 'equipment' | 'createdAt' | 'updatedAt'
+  >
 > & {
+  /** Replaces the whole set of assigned equipment. */
+  equipmentIds: string[];
   students: (WithOptionalId<Omit<LessonStudent, 'student' | 'skillRecords'>> & {
     skillRecords: WithOptionalId<LessonSkillRecord>[];
   })[];
