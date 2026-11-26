@@ -28,7 +28,7 @@ Run the scripts below inside the container (`docker compose exec upwind-board-se
 | Variable | Description |
 | --- | --- |
 | `PORT` | HTTP port (5001) |
-| `CORS_ORIGINS` | Comma-separated origins allowed to call the API. Empty disables CORS (local development goes through the Vite proxy) |
+| `CORS_ORIGINS` | Comma-separated origins allowed to call the API. `http://localhost:5000` locally; empty disables CORS |
 | `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` | PostgreSQL connection |
 | `DB_LOGGING` | Log SQL queries (`true`/`false`) |
 
@@ -136,11 +136,24 @@ src/
   application/     use cases, validated DTOs and pure services (tree, progression, lesson merge)
   infrastructure/
     config/        .env validation and TypeORM options
+    cache/         Redis client, cache and lock adapters
+    services/      environment, logger, hash and per-request data adapters
     persistence/type-orm/  ORM entities, mappers, repositories, migrations, CLI data source
     rest/          controllers, error filter and global setup (pipes, Swagger)
     modules/       Nest modules wiring ports to adapters
+  iam/             IAM login and sessions (own domain/application/infrastructure layers)
 ```
 
-## Authentication (pending)
+## Authentication (IAM)
 
-There is no auth yet. `lessons.instructor_id` already exists, so later the authenticated instructor could come from the token instead of the body, and the use cases could filter by instructor.
+Users sign in through the IAM with the OAuth 2.0 authorization code flow; the integration lives in `src/iam` and is a port of the one in presupuestia (the IAM's reference client). The browser never sees IAM tokens:
+
+1. `POST /auth/authorize { state }` returns the IAM login URL; the web app navigates there.
+2. The IAM redirects to the web app's `/callback?code&state`, which posts the code to `POST /auth/token`.
+3. The API exchanges the code (with `IAM_CLIENT_ID` / `IAM_CLIENT_SECRET`), reads `/oauth/userinfo`, mirrors the account in the `users` table (`SyncUserUseCase`) and stores the session in Redis. The browser only gets an httpOnly cookie (`upwind-board.session.{secure|insecure}`) that lives as long as the IAM refresh token.
+4. `AuthenticationMiddleware` requires that cookie on every route except `/auth/authorize`, `/auth/token`, `/auth/logout` and `/docs`. When the IAM access token expires it renews it with the refresh token. A Redis lock makes concurrent requests share one renewal. The middleware then exposes the session through `RequestDataService`.
+5. `POST /auth/userinfo` returns the profile, permissions and `hasAccess`. `POST /auth/logout` ends both sessions.
+
+Permissions come from the IAM keyed by resource, and this app's resource is its client id. Protect a handler with `@RequirePermissions({ action: 'lessons:write' })` (global `PermissionsGuard`; deny wins over allow).
+
+`lessons.instructor_id` is not linked to `users` yet. The signed-in user could later be matched to an instructor so the use cases filter by instructor.

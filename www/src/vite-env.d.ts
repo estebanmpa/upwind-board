@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  /** Base URL of the API. Defaults to `/api` (proxied by the dev server). */
-  readonly VITE_API_URL?: string;
+  /** Base URL of the API as the browser sees it (e.g. http://localhost:5001). */
+  readonly VITE_API_URL: string;
 }

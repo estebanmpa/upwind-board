@@ -11,8 +11,12 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as CallbackImport } from './routes/callback'
+import { Route as PublicImport } from './routes/_public'
 import { Route as AuthenticatedImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexImport } from './routes/_authenticated/index'
+import { Route as PublicNoAccessImport } from './routes/_public/no-access'
+import { Route as PublicLoginImport } from './routes/_public/login'
 import { Route as AuthenticatedSkillsImport } from './routes/_authenticated/skills'
 import { Route as AuthenticatedScheduleImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedInventoryImport } from './routes/_authenticated/inventory'
@@ -30,6 +34,17 @@ import { Route as AuthenticatedLessonsLessonIdEditImport } from './routes/_authe
 
 // Create/Update Routes
 
+const CallbackRoute = CallbackImport.update({
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const PublicRoute = PublicImport.update({
+  id: '/_public',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const AuthenticatedRoute = AuthenticatedImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRoute,
@@ -39,6 +54,18 @@ const AuthenticatedIndexRoute = AuthenticatedIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+
+const PublicNoAccessRoute = PublicNoAccessImport.update({
+  id: '/no-access',
+  path: '/no-access',
+  getParentRoute: () => PublicRoute,
+} as any)
+
+const PublicLoginRoute = PublicLoginImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublicRoute,
 } as any)
 
 const AuthenticatedSkillsRoute = AuthenticatedSkillsImport.update({
@@ -145,6 +172,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedImport
       parentRoute: typeof rootRoute
     }
+    '/_public': {
+      id: '/_public'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublicImport
+      parentRoute: typeof rootRoute
+    }
+    '/callback': {
+      id: '/callback'
+      path: '/callback'
+      fullPath: '/callback'
+      preLoaderRoute: typeof CallbackImport
+      parentRoute: typeof rootRoute
+    }
     '/_authenticated/inventory': {
       id: '/_authenticated/inventory'
       path: '/inventory'
@@ -165,6 +206,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/skills'
       preLoaderRoute: typeof AuthenticatedSkillsImport
       parentRoute: typeof AuthenticatedImport
+    }
+    '/_public/login': {
+      id: '/_public/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublicLoginImport
+      parentRoute: typeof PublicImport
+    }
+    '/_public/no-access': {
+      id: '/_public/no-access'
+      path: '/no-access'
+      fullPath: '/no-access'
+      preLoaderRoute: typeof PublicNoAccessImport
+      parentRoute: typeof PublicImport
     }
     '/_authenticated/': {
       id: '/_authenticated/'
@@ -299,11 +354,27 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface PublicRouteChildren {
+  PublicLoginRoute: typeof PublicLoginRoute
+  PublicNoAccessRoute: typeof PublicNoAccessRoute
+}
+
+const PublicRouteChildren: PublicRouteChildren = {
+  PublicLoginRoute: PublicLoginRoute,
+  PublicNoAccessRoute: PublicNoAccessRoute,
+}
+
+const PublicRouteWithChildren =
+  PublicRoute._addFileChildren(PublicRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '': typeof AuthenticatedRouteWithChildren
+  '': typeof PublicRouteWithChildren
+  '/callback': typeof CallbackRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/skills': typeof AuthenticatedSkillsRoute
+  '/login': typeof PublicLoginRoute
+  '/no-access': typeof PublicNoAccessRoute
   '/': typeof AuthenticatedIndexRoute
   '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
   '/instructors/new': typeof AuthenticatedInstructorsNewRoute
@@ -319,9 +390,13 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '': typeof PublicRouteWithChildren
+  '/callback': typeof CallbackRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/skills': typeof AuthenticatedSkillsRoute
+  '/login': typeof PublicLoginRoute
+  '/no-access': typeof PublicNoAccessRoute
   '/': typeof AuthenticatedIndexRoute
   '/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
   '/instructors/new': typeof AuthenticatedInstructorsNewRoute
@@ -339,9 +414,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/_public': typeof PublicRouteWithChildren
+  '/callback': typeof CallbackRoute
   '/_authenticated/inventory': typeof AuthenticatedInventoryRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/skills': typeof AuthenticatedSkillsRoute
+  '/_public/login': typeof PublicLoginRoute
+  '/_public/no-access': typeof PublicNoAccessRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/instructors/$instructorId': typeof AuthenticatedInstructorsInstructorIdRoute
   '/_authenticated/instructors/new': typeof AuthenticatedInstructorsNewRoute
@@ -360,9 +439,12 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/callback'
     | '/inventory'
     | '/schedule'
     | '/skills'
+    | '/login'
+    | '/no-access'
     | '/'
     | '/instructors/$instructorId'
     | '/instructors/new'
@@ -377,9 +459,13 @@ export interface FileRouteTypes {
     | '/students/$studentId'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | ''
+    | '/callback'
     | '/inventory'
     | '/schedule'
     | '/skills'
+    | '/login'
+    | '/no-access'
     | '/'
     | '/instructors/$instructorId'
     | '/instructors/new'
@@ -395,9 +481,13 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_authenticated'
+    | '/_public'
+    | '/callback'
     | '/_authenticated/inventory'
     | '/_authenticated/schedule'
     | '/_authenticated/skills'
+    | '/_public/login'
+    | '/_public/no-access'
     | '/_authenticated/'
     | '/_authenticated/instructors/$instructorId'
     | '/_authenticated/instructors/new'
@@ -415,10 +505,14 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  PublicRoute: typeof PublicRouteWithChildren
+  CallbackRoute: typeof CallbackRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  PublicRoute: PublicRouteWithChildren,
+  CallbackRoute: CallbackRoute,
 }
 
 export const routeTree = rootRoute
@@ -431,7 +525,9 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/_authenticated"
+        "/_authenticated",
+        "/_public",
+        "/callback"
       ]
     },
     "/_authenticated": {
@@ -454,6 +550,16 @@ export const routeTree = rootRoute
         "/_authenticated/students/$studentId/"
       ]
     },
+    "/_public": {
+      "filePath": "_public.tsx",
+      "children": [
+        "/_public/login",
+        "/_public/no-access"
+      ]
+    },
+    "/callback": {
+      "filePath": "callback.tsx"
+    },
     "/_authenticated/inventory": {
       "filePath": "_authenticated/inventory.tsx",
       "parent": "/_authenticated"
@@ -465,6 +571,14 @@ export const routeTree = rootRoute
     "/_authenticated/skills": {
       "filePath": "_authenticated/skills.tsx",
       "parent": "/_authenticated"
+    },
+    "/_public/login": {
+      "filePath": "_public/login.tsx",
+      "parent": "/_public"
+    },
+    "/_public/no-access": {
+      "filePath": "_public/no-access.tsx",
+      "parent": "/_public"
     },
     "/_authenticated/": {
       "filePath": "_authenticated/index.tsx",

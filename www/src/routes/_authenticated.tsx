@@ -1,12 +1,14 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 import { AppLayout } from '@/components/layout/AppLayout';
 
-/**
- * Access-control layout for the instructors' app. Auth is not implemented
- * yet, so every visitor is let through; the session check will live in
- * `beforeLoad`.
- */
+/** Instructors' app: requires an IAM session granting access to Upwind Board. */
 export const Route = createFileRoute('/_authenticated')({
+  beforeLoad: async ({ context }) => {
+    const { isAuthenticated, verifySession } = context.auth;
+    const session = isAuthenticated ? await verifySession() : null;
+    if (!session) throw redirect({ to: '/login' });
+    if (!session.hasAccess) throw redirect({ to: '/no-access' });
+  },
   component: AuthenticatedLayout,
 });
 

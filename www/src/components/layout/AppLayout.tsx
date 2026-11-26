@@ -1,12 +1,15 @@
 import type { ReactNode } from 'react';
 import {
+  ActionIcon,
   AppShell,
+  Avatar,
   Burger,
   Button,
   Group,
   NavLink,
   ScrollArea,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -14,15 +17,17 @@ import {
   IconCalendarWeek,
   IconLayoutDashboard,
   IconListTree,
+  IconLogout,
   IconPackage,
   IconPlus,
   IconSchool,
   IconUsers,
   type Icon,
 } from '@tabler/icons-react';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
 import { ColorSchemeToggle } from '@/components/common/ColorSchemeToggle';
 import { Logo } from '@/components/common/Logo';
+import { useAuth } from '@/iam';
 
 interface NavItem {
   to:
@@ -101,13 +106,51 @@ export function AppLayout({ children }: { children: ReactNode }) {
           ))}
         </AppShell.Section>
         <AppShell.Section>
-          <Text fz="xs" c="dimmed" px="sm">
-            Unauthenticated access (temporary)
-          </Text>
+          <UserCard />
         </AppShell.Section>
       </AppShell.Navbar>
 
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
+  );
+}
+
+function UserCard() {
+  const { payload, logout, isPending } = useAuth();
+  const navigate = useNavigate();
+  if (!payload) return null;
+
+  const signOut = () => logout().then(() => navigate({ to: '/login' }));
+
+  return (
+    <Group
+      gap="sm"
+      wrap="nowrap"
+      px="xs"
+      py="xs"
+      className="glass"
+      style={{ borderRadius: 'var(--mantine-radius-md)' }}
+    >
+      <Avatar name={payload.displayName} color="initials" radius="xl" size="md" />
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <Text fz="sm" fw={600} truncate>
+          {payload.displayName}
+        </Text>
+        <Text fz="xs" c="dimmed" truncate>
+          {payload.email}
+        </Text>
+      </div>
+      <Tooltip label="Sign out">
+        <ActionIcon
+          variant="subtle"
+          color="gray"
+          aria-label="Sign out"
+          loading={isPending}
+          onClick={signOut}
+        >
+          <IconLogout size={18} />
+        </ActionIcon>
+      </Tooltip>
+    </Group>
   );
 }

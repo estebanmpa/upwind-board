@@ -13,9 +13,7 @@ cp www/.env.example www/.env
 docker compose up --build -d   # http://localhost:5000
 ```
 
-In development, Vite forwards `/api/*` to the API (`VITE_API_PROXY_TARGET`, `http://upwind-board-server:5001` inside Docker), so CORS is not needed. Running `yarn dev` on the host instead? Set `VITE_API_PROXY_TARGET=http://localhost:5001`.
-
-Production builds call the API directly at `VITE_API_URL` (read from `.env` at build time) and are served by nginx (`Dockerfile.prod`, `nginx.conf`).
+The browser calls the API directly at `VITE_API_URL` (`http://localhost:5001` locally), so the API lists the app's origin in `CORS_ORIGINS`. Production builds read it from `.env` at build time and are served by nginx (`Dockerfile.prod`, `nginx.conf`).
 
 | Command | What it does |
 | --- | --- |
@@ -61,4 +59,6 @@ src/
   theme/        Mantine theme and global styles (glassmorphism, animations)
 ```
 
-Every screen hangs from `routes/_authenticated.tsx`, which currently lets everyone through. The session check will go in its `beforeLoad` once auth exists. There is no `_public.tsx` yet because there are no public screens (such as a login page).
+Every screen hangs from `routes/_authenticated.tsx`, whose `beforeLoad` checks the session with the API (`POST /auth/userinfo`, cached for 5 minutes). It sends signed-out users to `/login` and accounts without permissions on the app to `/no-access`, both under `routes/_public.tsx`. `/callback` completes the IAM login.
+
+The IAM integration lives in `src/iam` (import it from `@/iam`): `AuthProvider` / `useAuth` hold the session and `CallbackPage` validates the OAuth `state`. The session itself is an httpOnly cookie set by the API, so `api/http.ts` sends `credentials: 'include'`. Any 401 dispatches `UNAUTHORIZED_EVENT`, and the provider answers it by signing the user out with a single "Session expired" notice.

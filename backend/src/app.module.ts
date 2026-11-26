@@ -6,6 +6,10 @@ import {
   EnvironmentVariables,
   validateEnv,
 } from './infrastructure/config/env.validation.js';
+import { SyncUserUseCase } from './application/use-cases/users/sync-user.use-case.js';
+import { IamModule } from './iam/iam.module.js';
+import { GlobalModule } from './infrastructure/modules/global.module.js';
+import { UsersModule } from './infrastructure/modules/users.module.js';
 import { EquipmentModule } from './infrastructure/modules/equipment.module.js';
 import { InstructorsModule } from './infrastructure/modules/instructors.module.js';
 import { StudentsModule } from './infrastructure/modules/students.module.js';
@@ -27,6 +31,15 @@ import { SkillsModule } from './infrastructure/modules/skills.module.js';
           DB_NAME: config.get('DB_NAME'),
           DB_LOGGING: config.get('DB_LOGGING'),
         }),
+    }),
+    GlobalModule,
+    UsersModule,
+    IamModule.forRoot({
+      userSyncService: SyncUserUseCase,
+      cookiePrefix: 'upwind-board',
+      // Swagger UI and its JSON stay reachable without a session.
+      publicPathPrefixes: ['/docs'],
+      uiLocales: 'en',
     }),
     InstructorsModule,
     StudentsModule,
