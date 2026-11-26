@@ -17,6 +17,8 @@ services:
       - 5001:5001
     networks:
       - upwind-board-private-network
+      # Shared with the IAM stack, reachable as iam-backend-container.
+      - backend-network
     restart: unless-stopped
     logging: *default-logging
     env_file:
@@ -27,6 +29,8 @@ services:
     depends_on:
       upwind-board-db:
         condition: service_healthy
+      upwind-board-cache:
+        condition: service_started
 
   upwind-board-www:
     container_name: upwind-board-frontend-container
@@ -68,9 +72,29 @@ services:
       timeout: 5s
       retries: 10
 
+  upwind-board-cache:
+    image: redis:8-alpine
+    container_name: upwind-board-cache-container
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - 6381:6379
+    networks:
+      - upwind-board-private-network
+    # noeviction: sessions must never be dropped silently; when the limit is
+    # reached Redis rejects writes instead of evicting keys.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "${REDIS_MAXMEMORY:-256mb}", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - upwind-board-redis-volume:/data
+
 volumes:
   upwind-board-db-volume:
+  upwind-board-redis-volume:
 
 networks:
   upwind-board-private-network:
     driver: bridge
+
+  # Created by the IAM stack (or `docker network create backend-network`).
+  backend-network:
+    external: true

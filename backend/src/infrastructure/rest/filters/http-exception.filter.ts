@@ -14,6 +14,11 @@ import {
   DomainError,
   NotFoundError,
 } from '../../../domain/errors/domain.error.js';
+import {
+  IdentityProviderUnavailableException,
+  SessionNotFoundException,
+  UnauthorizedException,
+} from '../../../iam/domain/exceptions/auth.domain-exception.js';
 
 export interface ErrorResponseBody {
   statusCode: number;
@@ -97,6 +102,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private domainStatus(error: DomainError): number {
+    if (
+      error instanceof UnauthorizedException ||
+      error instanceof SessionNotFoundException
+    )
+      return HttpStatus.UNAUTHORIZED;
+    if (error instanceof IdentityProviderUnavailableException)
+      return HttpStatus.SERVICE_UNAVAILABLE;
     if (error instanceof NotFoundError) return HttpStatus.NOT_FOUND;
     if (error instanceof ConflictError) return HttpStatus.CONFLICT;
     if (error instanceof BusinessRuleViolationError)

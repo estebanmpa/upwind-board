@@ -21,11 +21,13 @@ services:
     depends_on:
       upwind-board-db:
         condition: service_healthy
+      upwind-board-cache:
+        condition: service_started
     networks:
       - proxy-network
       - upwind-board-private-network
     expose:
-      - "5001"
+      - "3000"
 
   upwind-board-www:
     container_name: upwind-board-frontend-container
@@ -60,8 +62,24 @@ services:
       timeout: 5s
       retries: 10
 
+  upwind-board-cache:
+    image: redis:8-alpine
+    container_name: upwind-board-cache-container
+    restart: unless-stopped
+    logging: *default-logging
+    ports:
+      - "127.0.0.1:6381:6379"
+    networks:
+      - upwind-board-private-network
+    # noeviction: sessions must never be dropped silently; when the limit is
+    # reached Redis rejects writes instead of evicting keys.
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "${REDIS_MAXMEMORY:-256mb}", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - upwind-board-redis-volume:/data
+
 volumes:
   upwind-board-db-volume:
+  upwind-board-redis-volume:
 
 networks:
   proxy-network:

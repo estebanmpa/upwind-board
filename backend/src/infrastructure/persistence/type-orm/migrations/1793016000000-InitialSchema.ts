@@ -34,6 +34,14 @@ export class InitialSchema1793016000000 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_equipment_id"`);
+        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_lesson_id"`);
+        await queryRunner.query(`DROP INDEX "public"."idx_lesson_equipment_equipment_id"`);
+        await queryRunner.query(`DROP TABLE "lesson_equipment"`);
+        await queryRunner.query(`DROP INDEX "public"."idx_equipment_type"`);
+        await queryRunner.query(`DROP TABLE "equipment"`);
+        await queryRunner.query(`DROP TYPE "public"."equipment_status"`);
+        await queryRunner.query(`DROP TYPE "public"."equipment_type"`);
         await queryRunner.query(`ALTER TABLE "lesson_skill_records" DROP CONSTRAINT "fk_lesson_skill_records_skill_id"`);
         await queryRunner.query(`ALTER TABLE "lesson_skill_records" DROP CONSTRAINT "fk_lesson_skill_records_lesson_student_id"`);
         await queryRunner.query(`ALTER TABLE "skills" DROP CONSTRAINT "fk_skills_parent_id"`);
@@ -53,13 +61,5 @@ export class InitialSchema1793016000000 implements MigrationInterface {
         await queryRunner.query(`DROP INDEX "public"."idx_lessons_instructor_id"`);
         await queryRunner.query(`DROP TABLE "lessons"`);
         await queryRunner.query(`DROP TABLE "instructors"`);
-        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_equipment_id"`);
-        await queryRunner.query(`ALTER TABLE "lesson_equipment" DROP CONSTRAINT "fk_lesson_equipment_lesson_id"`);
-        await queryRunner.query(`DROP INDEX "public"."idx_lesson_equipment_equipment_id"`);
-        await queryRunner.query(`DROP TABLE "lesson_equipment"`);
-        await queryRunner.query(`DROP INDEX "public"."idx_equipment_type"`);
-        await queryRunner.query(`DROP TABLE "equipment"`);
-        await queryRunner.query(`DROP TYPE "public"."equipment_status"`);
-        await queryRunner.query(`DROP TYPE "public"."equipment_type"`);
     }
 }

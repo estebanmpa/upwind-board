@@ -6,6 +6,7 @@ import { LessonStudentOrmEntity } from './lesson-student.orm-entity.js';
 import { LessonOrmEntity } from './lesson.orm-entity.js';
 import { SkillOrmEntity } from './skill.orm-entity.js';
 import { StudentOrmEntity } from './student.orm-entity.js';
+import { UserOrmEntity } from './user.orm-entity.js';
 
 export const TYPEORM_ENTITIES = [
   InstructorOrmEntity,
@@ -16,4 +17,5 @@ export const TYPEORM_ENTITIES = [
   LessonSkillRecordOrmEntity,
   EquipmentOrmEntity,
   LessonEquipmentOrmEntity,
+  UserOrmEntity,
 ];
