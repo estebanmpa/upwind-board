@@ -22,6 +22,9 @@ export function CallbackPage({
   const [outcome] = useState(() => resolveCallback(search, Security.get('state')));
   const [exchangeError, setExchangeError] = useState<string>();
   const started = useRef(false); // StrictMode runs effects twice
+  // Set once this page's code was exchanged. The stored user alone is not
+  // enough: it can belong to a session the server already ended.
+  const [isExchanged, setIsExchanged] = useState(false);
 
   useEffect(() => {
     if (outcome.kind === 'state-mismatch' && !started.current) {
@@ -31,15 +34,17 @@ export function CallbackPage({
   }, [outcome, logout]);
 
   useEffect(() => {
-    if (isAuthenticated && outcome.kind === 'exchange') {
+    if (isExchanged && isAuthenticated) {
       onAuthenticated();
       return;
     }
     if (outcome.kind !== 'exchange' || started.current) return;
     started.current = true;
     // Navigation waits for isAuthenticated (above) so the router sees the session.
-    completeLogin(outcome.code).catch((error: Error) => setExchangeError(error.message));
-  }, [outcome, isAuthenticated, completeLogin, onAuthenticated]);
+    completeLogin(outcome.code)
+      .then(() => setIsExchanged(true))
+      .catch((error: Error) => setExchangeError(error.message));
+  }, [outcome, isExchanged, isAuthenticated, completeLogin, onAuthenticated]);
 
   if (outcome.kind === 'state-mismatch') {
     return (
