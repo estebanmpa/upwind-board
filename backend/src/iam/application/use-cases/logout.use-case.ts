@@ -27,6 +27,7 @@ export class LogoutUseCase {
     if (!session) return;
 
     await this.sessionService.deleteSession(sessionId);
+    this.logger.info('User signed out', { userId: session.userId });
     await this.logoutFromIdentityProvider(session.accessToken);
   }
 

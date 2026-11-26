@@ -23,14 +23,16 @@ export const Security = {
     }
   },
 
-  /** Removes only the IAM keys: other preferences (e.g. color scheme) stay. */
-  clear(): void {
-    for (const key of ['user', 'state'] satisfies Key[]) {
-      try {
-        localStorage.removeItem(PREFIX + key);
-      } catch {
-        // Nothing to clear.
-      }
+  remove(key: Key): void {
+    try {
+      localStorage.removeItem(PREFIX + key);
+    } catch {
+      // Nothing to remove.
     }
+  },
+
+  /** Full storage key, to recognize changes made by other windows. */
+  storageKey(key: Key): string {
+    return PREFIX + key;
   },
 };

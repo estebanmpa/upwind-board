@@ -55,19 +55,32 @@ function readStoredUser(): UserSession | null {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [payload, setPayload] = useState<UserSession | null>(readStoredUser);
+  const [payload, setPayloadState] = useState<UserSession | null>(readStoredUser);
+  // Mirrors payload for event handlers, which may run before a re-render.
+  const payloadRef = useRef(payload);
   const [isRedirecting, setIsRedirecting] = useState(false);
   const isLoggingOut = useRef(false);
   const queryClient = useQueryClient();
+
+  const setPayload = useCallback((session: UserSession | null) => {
+    payloadRef.current = session;
+    setPayloadState(session);
+  }, []);
+
+  // Only the user is removed: removing the state too would break a login
+  // under way in another window of the app, which shares this storage.
+  const endLocalSession = useCallback(() => {
+    Security.remove('user');
+    setPayload(null);
+    // Nothing cached for this user may leak into the next session.
+    queryClient.clear();
+  }, [queryClient, setPayload]);
 
   const logoutMutation = useMutation({
     mutationFn: requestLogout,
     onSettled: () => {
       isLoggingOut.current = false;
-      Security.clear();
-      setPayload(null);
-      // Nothing cached for this user may leak into the next session.
-      queryClient.clear();
+      endLocalSession();
     },
   });
 
@@ -107,19 +120,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [logoutAsync]);
 
   useEffect(() => {
+    // The server already ended this session, so there is nothing to log out
+    // there. Calling it anyway would send the cookie the browser holds now,
+    // which may belong to a session just opened in another window.
     const handleUnauthorized = () => {
-      if (!payload || isLoggingOut.current) return;
+      if (!payloadRef.current || isLoggingOut.current) return;
       notifications.show({
         id: 'session-expired',
         color: 'yellow',
         title: 'Session expired',
         message: 'Please sign in again.',
       });
-      void logout();
+      endLocalSession();
     };
     window.addEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
     return () => window.removeEventListener(UNAUTHORIZED_EVENT, handleUnauthorized);
-  }, [logout, payload]);
+  }, [endLocalSession]);
+
+  // Every window of the app shares the storage (on Android the installed app
+  // shares Chrome's too): follow logins and logouts made in the others.
+  useEffect(() => {
+    const followOtherWindows = (event: StorageEvent) => {
+      if (event.key !== Security.storageKey('user') && event.key !== null) return;
+      const stored = readStoredUser();
+      if (!stored) queryClient.clear();
+      setPayload(stored);
+    };
+    window.addEventListener('storage', followOtherWindows);
+    return () => window.removeEventListener('storage', followOtherWindows);
+  }, [queryClient, setPayload]);
 
   // Going back from the IAM login restores this page from the bfcache with
   // the redirect still flagged, which would keep it loading forever.

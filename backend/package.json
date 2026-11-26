@@ -1,6 +1,6 @@
 {
   "name": "upwind-board-backend",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "Upwind Board API: IKO kitesurf lessons and student progression",
   "author": "",
   "private": true,
