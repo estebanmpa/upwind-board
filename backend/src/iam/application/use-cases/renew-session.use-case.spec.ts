@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { LockService } from '../../../domain/services/lock.service.js';
+import type { LoggerService } from '../../../domain/services/logger.service.js';
 import { buildSession, fakeEnvironment } from '../../test/fakes.js';
 import type { Session } from '../../domain/entities/session.js';
 import {
@@ -53,13 +54,15 @@ function setup({
     tryAcquire: vi.fn().mockResolvedValue(lockToken ?? undefined),
     release: vi.fn().mockResolvedValue(undefined),
   };
+  const logger = { warn: vi.fn() };
   const useCase = new RenewSessionUseCase(
     sessions as unknown as SessionService,
     iam as unknown as IdentityProviderRepository,
     lock as unknown as LockService,
     fakeEnvironment(),
+    logger as unknown as LoggerService,
   );
-  return { useCase, sessions, iam, lock };
+  return { useCase, sessions, iam, lock, logger };
 }
 
 describe('RenewSessionUseCase', () => {
@@ -104,11 +107,15 @@ describe('RenewSessionUseCase', () => {
   });
 
   it('ends the session when IAM rejects the refresh token', async () => {
-    const { useCase, sessions, lock } = setup({
+    const { useCase, sessions, lock, logger } = setup({
       refreshToken: vi.fn().mockRejectedValue(new UnauthorizedException()),
     });
     await expect(useCase.execute(expired())).rejects.toThrow(
       SessionNotFoundException,
+    );
+    expect(logger.warn).toHaveBeenCalledWith(
+      'IAM rejected the session renewal',
+      expect.objectContaining({ userId: expect.any(String) }),
     );
     expect(sessions.deleteSession).toHaveBeenCalledWith('session-1');
     expect(lock.release).toHaveBeenCalled();

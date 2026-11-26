@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
+import { LoggerService } from '../../../../domain/services/logger.service.js';
 import { EnvironmentService } from '../../../../infrastructure/services/environment.service.js';
 import { AuthorizeRequestDto } from '../../../application/dto/authorize-request.js';
 import { IamTokenExchangeRequestDto } from '../../../application/dto/iam-exchange-token-request.js';
@@ -28,6 +29,7 @@ export class AuthController {
     private readonly sessionService: SessionService,
     private readonly userSyncService: UserSyncService,
     private readonly logoutUseCase: LogoutUseCase,
+    private readonly logger: LoggerService,
   ) {}
 
   /** Exchanges the authorization code, mirrors the user and opens a session. */
@@ -66,6 +68,10 @@ export class AuthController {
     });
 
     response.cookie(cookie.name, cookie.value, cookie.options);
+    this.logger.info('User signed in', {
+      userId: user.id,
+      iamUserId: user.iamId,
+    });
     return UserInfoResponseDto.fromSession(iamUser, this.environment.clientId);
   }
 
