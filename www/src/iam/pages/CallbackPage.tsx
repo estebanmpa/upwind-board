@@ -2,7 +2,12 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Button, Center, Loader, Paper, Stack, Text, Title } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useAuth } from '../auth';
-import { resolveCallback, type CallbackSearch } from '../callback';
+import {
+  afterStateMismatch,
+  consumeState,
+  resolveCallback,
+  type CallbackSearch,
+} from '../callback';
 import { Security } from '../security';
 
 interface CallbackPageProps {
@@ -17,7 +22,7 @@ export function CallbackPage({
   onAuthenticated,
   onBackToLogin,
 }: CallbackPageProps) {
-  const { completeLogin, logout, isAuthenticated } = useAuth();
+  const { completeLogin, isAuthenticated } = useAuth();
   // Read once: a successful exchange must not turn into a mismatch afterwards.
   const [outcome] = useState(() => resolveCallback(search, Security.get('state')));
   const [exchangeError, setExchangeError] = useState<string>();
@@ -26,12 +31,15 @@ export function CallbackPage({
   // enough: it can belong to a session the server already ended.
   const [isExchanged, setIsExchanged] = useState(false);
 
+  // Read once (above), so consuming it here cannot turn this page into a mismatch.
+  useEffect(() => consumeState(search.state, Security), [search.state]);
+
+  const mismatchAction =
+    outcome.kind === 'state-mismatch' ? afterStateMismatch(isAuthenticated) : undefined;
+
   useEffect(() => {
-    if (outcome.kind === 'state-mismatch' && !started.current) {
-      started.current = true;
-      void logout();
-    }
-  }, [outcome, logout]);
+    if (mismatchAction === 'continue') onAuthenticated();
+  }, [mismatchAction, onAuthenticated]);
 
   useEffect(() => {
     if (isExchanged && isAuthenticated) {
@@ -46,7 +54,7 @@ export function CallbackPage({
       .catch((error: Error) => setExchangeError(error.message));
   }, [outcome, isExchanged, isAuthenticated, completeLogin, onAuthenticated]);
 
-  if (outcome.kind === 'state-mismatch') {
+  if (mismatchAction === 'show-error') {
     return (
       <CallbackProblem title="Security check failed" onBack={onBackToLogin}>
         The sign-in response does not match the request made from this browser. Please
