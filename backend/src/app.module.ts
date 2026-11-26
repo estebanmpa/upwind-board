@@ -16,6 +16,7 @@ import { StudentsModule } from './infrastructure/modules/students.module.js';
 import { LessonsModule } from './infrastructure/modules/lessons.module.js';
 import { ProgressModule } from './infrastructure/modules/progress.module.js';
 import { SkillsModule } from './infrastructure/modules/skills.module.js';
+import { VersionModule } from './infrastructure/modules/version.module.js';
 
 @Module({
   imports: [
@@ -37,13 +38,14 @@ import { SkillsModule } from './infrastructure/modules/skills.module.js';
     IamModule.forRoot({
       userSyncService: SyncUserUseCase,
       cookiePrefix: 'upwind-board',
-      // Swagger UI and its JSON stay reachable without a session.
-      publicPathPrefixes: ['/docs'],
+      // Swagger UI, its JSON and the version stay reachable without a session.
+      publicPathPrefixes: ['/docs', '/version'],
       uiLocales: 'en',
     }),
     InstructorsModule,
     StudentsModule,
     SkillsModule,
+    VersionModule,
     LessonsModule,
     ProgressModule,
     EquipmentModule,
