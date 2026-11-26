@@ -2,6 +2,9 @@ import { Inject, Injectable } from '@nestjs/common';
 import { CacheService } from '../../domain/services/cache.service.js';
 import { REDIS_CLIENT, type RedisClient } from './redis-client.js';
 
+// Keys requested per SCAN round-trip. It is only a hint to Redis.
+const SCAN_COUNT = 100;
+
 /** Values are stored as JSON, so they come back as plain objects. */
 @Injectable()
 export class RedisCacheService extends CacheService {
@@ -24,7 +27,19 @@ export class RedisCacheService extends CacheService {
     await this.client.del(key);
   }
 
+  /**
+   * Uses SCAN instead of KEYS: KEYS walks the whole keyspace in one call and
+   * blocks Redis while it runs. SCAN may return a key more than once, so the
+   * result is deduped.
+   */
   async getKeys(pattern: string): Promise<string[]> {
-    return this.client.keys(pattern);
+    const keys = new Set<string>();
+    for await (const batch of this.client.scanIterator({
+      MATCH: pattern,
+      COUNT: SCAN_COUNT,
+    })) {
+      for (const key of batch) keys.add(key);
+    }
+    return [...keys];
   }
 }
