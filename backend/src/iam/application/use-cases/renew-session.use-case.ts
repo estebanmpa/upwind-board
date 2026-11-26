@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LockService } from '../../../domain/services/lock.service.js';
+import { LoggerService } from '../../../domain/services/logger.service.js';
 import { EnvironmentService } from '../../../infrastructure/services/environment.service.js';
 import { Cookie } from '../../domain/entities/cookie.js';
 import type { Session } from '../../domain/entities/session.js';
@@ -39,6 +40,7 @@ export class RenewSessionUseCase {
     private readonly identityProvider: IdentityProviderRepository,
     private readonly lockService: LockService,
     private readonly environment: EnvironmentService,
+    private readonly logger: LoggerService,
   ) {}
 
   async execute(session: Session): Promise<RenewedSession> {
@@ -92,6 +94,10 @@ export class RenewSessionUseCase {
     } catch (error) {
       if (!this.isRejectedByIdentityProvider(error)) throw error;
       // IAM ended the session (logout, revocation, expiry): end ours too.
+      this.logger.warn('IAM rejected the session renewal', {
+        userId: session.userId,
+        reason: error instanceof Error ? error.message : undefined,
+      });
       await this.sessionService.deleteSession(session.id);
       throw new SessionNotFoundException('Session expired');
     }
