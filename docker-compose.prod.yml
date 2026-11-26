@@ -68,7 +68,7 @@ services:
     restart: unless-stopped
     logging: *default-logging
     ports:
-      - "127.0.0.1:6381:6379"
+      - "127.0.0.1:6382:6379"
     networks:
       - upwind-board-private-network
     # noeviction: sessions must never be dropped silently; when the limit is
